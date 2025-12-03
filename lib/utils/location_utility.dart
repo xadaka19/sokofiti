@@ -30,10 +30,7 @@ final class LocationUtility {
   LeafLocation? get location => _location;
 
   set location(LeafLocation? location) {
-    // This will only check the reference in memory and not the actual content which
-    // is not ideal way, but we keep it like this just for the sake of it as
-    // this does not have any downside.
-    // Todo(rio): override == in LeafLocation to have better equality
+    // LeafLocation now has proper == and hashCode overrides for value equality
     if (location == _location) return;
     _location = location;
   }
@@ -68,9 +65,24 @@ final class LocationUtility {
   }
 
   Future<void> _getLiveLocation() async {
-    // This will require user to manually tap the my location button to get the current location
-    // instead of directly fetching it when the controller is ready.
-    // TODO(rio): Refactor this to use last known location during the initial load and immediately fetch the current location once the controller is ready
+    // First, try to get last known position for immediate feedback
+    // This provides a faster initial experience while we fetch the current position
+    Position? lastKnownPosition;
+    try {
+      lastKnownPosition = await Geolocator.getLastKnownPosition();
+      if (lastKnownPosition != null && location == null) {
+        // Use last known position immediately for faster initial load
+        location = await getLeafLocationFromLatLng(
+          latitude: lastKnownPosition.latitude,
+          longitude: lastKnownPosition.longitude,
+        );
+        log('Using last known position for initial load', name: '_getLiveLocation');
+      }
+    } on Exception catch (e) {
+      log('Failed to get last known position: $e', name: '_getLiveLocation');
+    }
+
+    // Now fetch the current position in the background
     Position? position;
     try {
       position = await Geolocator.getCurrentPosition(
@@ -79,11 +91,14 @@ final class LocationUtility {
         ),
       );
     } on TimeoutException catch (_) {
-      position = await Geolocator.getLastKnownPosition();
+      // If current position times out, we already have last known position
+      log('Current position timed out, using last known', name: '_getLiveLocation');
+      position = lastKnownPosition;
     } on Exception catch (e, stack) {
       log('$e', name: '_getLiveLocation');
       log('$stack', name: '_getLiveLocation');
     }
+
     if (position == null) {
       _getPersistedLocation();
     } else {

@@ -5,6 +5,7 @@ import 'package:eClassify/data/model/user/user_model.dart';
 import 'package:eClassify/utils/constant.dart';
 import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/hive_keys.dart';
+import 'package:eClassify/utils/security/secure_storage_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
@@ -12,8 +13,20 @@ class HiveUtils {
   ///private constructor
   HiveUtils._();
 
+  // Cache for JWT to avoid async calls everywhere
+  static String? _cachedJWT;
+
+  /// Get JWT token (uses cached value for synchronous access)
+  /// For initial load, use getJWTAsync() instead
   static String getJWT() {
-    return Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.jwtToken);
+    // Return cached JWT if available, otherwise try Hive for backwards compatibility
+    return _cachedJWT ?? Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.jwtToken) ?? '';
+  }
+
+  /// Async method to get JWT from secure storage
+  static Future<String?> getJWTAsync() async {
+    _cachedJWT = await SecureStorageService.getJWT();
+    return _cachedJWT;
   }
 
   static void dontShowChooseLocationDialog() {
@@ -92,7 +105,14 @@ class HiveUtils {
     return Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.longitudeKey);
   }
 
-  static void setJWT(String token) async {
+  /// Set JWT token securely
+  /// Stores in both secure storage (primary) and Hive (for backwards compatibility)
+  static Future<void> setJWT(String token) async {
+    // Store in secure storage (encrypted)
+    await SecureStorageService.setJWT(token);
+    // Update cache
+    _cachedJWT = token;
+    // Also store in Hive for backwards compatibility (will be removed in future)
     await Hive.box(HiveKeys.userDetailsBox).put(HiveKeys.jwtToken, token);
   }
 
@@ -224,6 +244,9 @@ class HiveUtils {
     bool? isRedirect,
   }) async {
     await Hive.box(HiveKeys.userDetailsBox).clear();
+    // Clear secure storage on logout
+    await SecureStorageService.clearAll();
+    _cachedJWT = null;
     HiveUtils.setUserIsAuthenticated(false);
 
     onLogout.call();
@@ -238,6 +261,9 @@ class HiveUtils {
   static Future<void> clear() async {
     await Hive.box(HiveKeys.userDetailsBox).clear();
     await Hive.box(HiveKeys.historyBox).clear();
+    // Clear secure storage
+    await SecureStorageService.clearAll();
+    _cachedJWT = null;
     HiveUtils.setUserIsAuthenticated(false);
   }
 

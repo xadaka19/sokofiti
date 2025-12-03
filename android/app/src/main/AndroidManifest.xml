@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.eclassify.wrteam">
+    package="com.sokofiti.app">
     <!--
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -46,7 +46,7 @@
         android:allowBackup="false"
         android:fullBackupOnly="false"
         android:icon="@mipmap/ic_launcher"
-        android:label="eClassify"
+        android:label="Sokofiti"
         android:largeHeap="true"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
@@ -87,13 +87,13 @@
 
 
                 <data
-                    android:host="eclassifyweb.wrteam.me"
+                    android:host="sokofiti.com"
                     android:pathPattern="/ad-details/.*"
-                    android:scheme="eclassify" />
+                    android:scheme="sokofiti" />
                 <data
-                    android:host="eclassifyweb.wrteam.me"
+                    android:host="sokofiti.com"
                     android:pathPattern="/seller/.*"
-                    android:scheme="eclassify" />
+                    android:scheme="sokofiti" />
             </intent-filter>
 
 

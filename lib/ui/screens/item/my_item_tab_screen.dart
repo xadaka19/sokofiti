@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:eClassify/app/routes.dart';
 import 'package:eClassify/data/cubits/item/delete_item_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_my_item_cubit.dart';
+import 'package:eClassify/data/cubits/item/my_items_refresh_cubit.dart';
 import 'package:eClassify/data/cubits/renew_item_cubit.dart';
 import 'package:eClassify/data/model/item/item_model.dart';
 import 'package:eClassify/ui/screens/home/home_screen.dart';
@@ -28,7 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
-Map<String, FetchMyItemsCubit> myAdsCubitReference = {};
+
 
 class MyItemTab extends StatefulWidget {
   final String? getItemsWithStatus;
@@ -53,7 +54,6 @@ class _MyItemTabState extends CloudState<MyItemTab> {
         getItemsWithStatus: widget.getItemsWithStatus,
       );
       _pageScrollController.addListener(_pageScroll);
-      setReferenceOfCubit();
     }
 
     _selectedItems.addListener(() {
@@ -82,11 +82,6 @@ class _MyItemTabState extends CloudState<MyItemTab> {
         );
       }
     }
-  }
-
-  void setReferenceOfCubit() {
-    myAdsCubitReference[widget.getItemsWithStatus!] = context
-        .read<FetchMyItemsCubit>();
   }
 
   ListView shimmerEffect() {
@@ -237,17 +232,29 @@ class _MyItemTabState extends CloudState<MyItemTab> {
 
   @override
   Widget build(BuildContext context) {
-    return ItemListeners(
-      onComplete: (isSuccess) {
-        _overlayController.hide();
-        _selectedItems.clear();
-        if (isSuccess) {
+    return BlocListener<MyItemsRefreshCubit, MyItemsRefreshState?>(
+      listener: (context, state) {
+        if (state == null) return;
+        // Refresh if this tab's status matches or if refreshAll was called
+        if (state.event == MyItemsRefreshEvent.refreshAll ||
+            (state.event == MyItemsRefreshEvent.refreshWithStatus &&
+                state.status == widget.getItemsWithStatus)) {
           context.read<FetchMyItemsCubit>().fetchMyItems(
             getItemsWithStatus: widget.getItemsWithStatus,
           );
         }
       },
-      child: BlocBuilder<FetchMyItemsCubit, FetchMyItemsState>(
+      child: ItemListeners(
+        onComplete: (isSuccess) {
+          _overlayController.hide();
+          _selectedItems.clear();
+          if (isSuccess) {
+            context.read<FetchMyItemsCubit>().fetchMyItems(
+              getItemsWithStatus: widget.getItemsWithStatus,
+            );
+          }
+        },
+        child: BlocBuilder<FetchMyItemsCubit, FetchMyItemsState>(
         builder: (context, state) {
           if (state is FetchMyItemsInProgress) {
             return shimmerEffect();
@@ -359,8 +366,6 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                           context.read<FetchMyItemsCubit>().fetchMyItems(
                             getItemsWithStatus: widget.getItemsWithStatus,
                           );
-
-                          setReferenceOfCubit();
                         },
                         color: context.color.territoryColor,
                         child: ListenableBuilder(
@@ -398,8 +403,6 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                                                     getItemsWithStatus: widget
                                                         .getItemsWithStatus,
                                                   );
-
-                                              setReferenceOfCubit();
                                             }
                                           });
                                         } else {
@@ -696,6 +699,7 @@ class _MyItemTabState extends CloudState<MyItemTab> {
           }
           return const SizedBox.shrink();
         },
+      ),
       ),
     );
   }

@@ -37,7 +37,7 @@ if (keystorePropertiesFile.exists()) {
 
 
 android {
-    namespace "com.eclassify.wrteam"
+    namespace "com.sokofiti.app"
     compileSdkVersion 36
     //ndkVersion "26.3.11579264"
     //ndkVersion "25.1.8937393"
@@ -79,7 +79,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.eclassify.wrteam"
+        applicationId "com.sokofiti.app"
         minSdkVersion 24
         targetSdkVersion 36
         multiDexEnabled true
@@ -101,6 +101,12 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.debug
+            // Enable code obfuscation and optimization
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
             shrinkResources false
         }
