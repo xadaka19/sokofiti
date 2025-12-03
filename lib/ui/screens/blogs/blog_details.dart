@@ -48,7 +48,7 @@ class BlogDetails extends StatelessWidget {
                 child: SizedBox(
                   width: context.screenWidth,
                   height: 170,
-                  child: UiUtils.getImage(blog.image!, fit: BoxFit.fill),
+                  child: UiUtils.getImage(blog.image, fit: BoxFit.fill),
                 ),
               ),
               SizedBox(height: 15),

@@ -160,8 +160,8 @@ class LoginScreenState extends State<SignUpMainScreen> {
                         .fill(HiveUtils.getUserDetails());
                     if (state.isProfileCompleted) {
                       HiveUtils.setUserIsAuthenticated(true);
-                      if (HiveUtils.getCityName() != null &&
-                          HiveUtils.getCityName() != "") {
+                      final locationCity = HiveUtils.getLocationV2()?.city?.canonical;
+                      if (locationCity != null && locationCity.trim().isNotEmpty) {
                         HelperUtils.killPreviousPages(
                             context, Routes.main, {"from": "login"});
                       } else {

@@ -256,12 +256,6 @@ class _AddItemDetailsState extends CloudState<AddItemDetails>
       adDescriptionControllers[lang['code']] ??= TextEditingController();
     }
 
-    // --- Slug auto-generation from English title ---
-    final englishLang = languages.firstWhere(
-      (lang) => (lang['code']?.toString().toLowerCase() ?? '') == 'en',
-      orElse: () => null,
-    );
-
     // Populate translations if in edit mode and not yet populated
     if ((widget.isEdit ?? false) && !_translationsPopulated) {
       if (item?.translations != null &&
