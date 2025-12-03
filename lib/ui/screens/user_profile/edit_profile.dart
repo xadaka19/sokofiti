@@ -15,6 +15,8 @@ import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/hive_utils.dart';
+import 'package:eClassify/data/model/location/leaf_location.dart';
+import 'package:eClassify/data/model/localized_string.dart';
 import 'package:eClassify/utils/image_picker.dart';
 import 'package:eClassify/utils/ui_utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -76,11 +78,12 @@ class UserProfileScreenState extends State<UserProfileScreen> {
   void initState() {
     super.initState();
     isFromLogin = widget.from == 'login';
-    city = HiveUtils.getCityName();
-    _state = HiveUtils.getStateName();
-    country = HiveUtils.getCountryName();
-    latitude = HiveUtils.getLatitude();
-    longitude = HiveUtils.getLongitude();
+    final location = HiveUtils.getLocationV2();
+    city = location?.city?.canonical;
+    _state = location?.state?.canonical;
+    country = location?.country?.canonical;
+    latitude = location?.latitude;
+    longitude = location?.longitude;
 
     nameController.text = (HiveUtils.getUserDetails().name) ?? "";
     emailController.text = HiveUtils.getUserDetails().email ?? "";
@@ -472,16 +475,18 @@ class UserProfileScreenState extends State<UserProfileScreen> {
             Navigator.of(context)
               ..pop()
               ..pop();
-          } else if (HiveUtils.getCityName() != null &&
-              HiveUtils.getCityName().toString().trim().isNotEmpty) {
-            HelperUtils.killPreviousPages(context, Routes.main, {
-              "from": widget.from,
-            });
           } else {
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              Routes.locationPermissionScreen,
-              (route) => false,
-            );
+            final locationCity = HiveUtils.getLocationV2()?.city?.canonical;
+            if (locationCity != null && locationCity.trim().isNotEmpty) {
+              HelperUtils.killPreviousPages(context, Routes.main, {
+                "from": widget.from,
+              });
+            } else {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.locationPermissionScreen,
+                (route) => false,
+              );
+            }
           }
         });
       }
@@ -536,12 +541,14 @@ class UserProfileScreenState extends State<UserProfileScreen> {
       outerPadding: EdgeInsetsDirectional.only(top: 15),
       onPressed: () {
         if (!isFromLogin && city != null && city != "") {
-          HiveUtils.setCurrentLocation(
-            city: city,
-            state: _state,
-            country: country,
-            latitude: latitude,
-            longitude: longitude,
+          HiveUtils.setLocationV2(
+            location: LeafLocation(
+              city: city != null ? LocalizedString(canonical: city!) : null,
+              state: _state != null ? LocalizedString(canonical: _state!) : null,
+              country: country != null ? LocalizedString(canonical: country!) : null,
+              latitude: latitude,
+              longitude: longitude,
+            ),
           );
 
           context.read<SliderCubit>().fetchSlider(context);

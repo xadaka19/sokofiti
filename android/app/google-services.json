@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "288767792538",
+    "project_id": "sokofiti-2d6ca",
+    "storage_bucket": "sokofiti-2d6ca.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288767792538:android:e005df3bd503e76d2b5623",
+        "android_client_info": {
+          "package_name": "com.sokofiti.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288767792538-8g7ocuo0m3kjoi60rs7ir05t1ukpq1bg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sokofiti.app",
+            "certificate_hash": "79e2fdde0bd232752da32b538bd116b6b2262e79"
+          }
+        },
+        {
+          "client_id": "288767792538-iivnodkv2f83mrdhbdrortg3de8bsitk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sokofiti.app",
+            "certificate_hash": "7b6099242ae31f3eaf7210fe0ab91e625aa5f821"
+          }
+        },
+        {
+          "client_id": "288767792538-5p2tlebpnbig2593tiel6be5qdnmssop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288767792538-5p2tlebpnbig2593tiel6be5qdnmssop.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+
