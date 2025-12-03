@@ -166,4 +166,48 @@ class LeafLocation {
     'primary_text': primaryText,
     'secondary_text': secondaryText,
   };
+
+  /// Compares two LeafLocation objects for equality.
+  ///
+  /// Two locations are considered equal if they have the same:
+  /// - placeId (if both have one)
+  /// - OR the same coordinates (latitude and longitude)
+  /// - OR the same canonical path (area, city, state, country)
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! LeafLocation) return false;
+
+    // If both have placeId, compare by placeId
+    if (placeId != null && other.placeId != null) {
+      return placeId == other.placeId;
+    }
+
+    // Compare by coordinates if both have them
+    if (hasCoordinates && other.hasCoordinates) {
+      // Use a small epsilon for floating point comparison
+      const epsilon = 0.0001;
+      final latMatch = (latitude! - other.latitude!).abs() < epsilon;
+      final lngMatch = (longitude! - other.longitude!).abs() < epsilon;
+      if (latMatch && lngMatch) return true;
+    }
+
+    // Compare by canonical path
+    return canonicalPath == other.canonicalPath;
+  }
+
+  @override
+  int get hashCode {
+    // Use placeId if available, otherwise use coordinates or canonical path
+    if (placeId != null) {
+      return placeId.hashCode;
+    }
+    if (hasCoordinates) {
+      // Round to 4 decimal places for consistent hashing
+      final roundedLat = (latitude! * 10000).round();
+      final roundedLng = (longitude! * 10000).round();
+      return Object.hash(roundedLat, roundedLng);
+    }
+    return canonicalPath.hashCode;
+  }
 }

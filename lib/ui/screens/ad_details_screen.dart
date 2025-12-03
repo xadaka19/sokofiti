@@ -16,6 +16,7 @@ import 'package:eClassify/data/cubits/item/delete_item_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_item_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_my_item_cubit.dart';
 import 'package:eClassify/data/cubits/item/item_total_click_cubit.dart';
+import 'package:eClassify/data/cubits/item/my_items_refresh_cubit.dart';
 import 'package:eClassify/data/cubits/item/job_application/fetch_job_application_cubit.dart';
 import 'package:eClassify/data/cubits/item/related_item_cubit.dart';
 import 'package:eClassify/data/cubits/location/leaf_location_cubit.dart';
@@ -42,7 +43,6 @@ import 'package:eClassify/ui/screens/google_map_screen.dart';
 import 'package:eClassify/ui/screens/home/home_screen.dart';
 import 'package:eClassify/ui/screens/home/widgets/grid_list_adapter.dart';
 import 'package:eClassify/ui/screens/home/widgets/home_sections_adapter.dart';
-import 'package:eClassify/ui/screens/item/my_item_tab_screen.dart';
 import 'package:eClassify/ui/screens/widgets/blurred_dialog_box.dart';
 import 'package:eClassify/ui/screens/widgets/errors/no_internet.dart';
 import 'package:eClassify/ui/screens/widgets/errors/something_went_wrong.dart';
@@ -309,14 +309,9 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       changeState.responseMessage,
                     );
                     context.read<FetchItemCubit>().fetchItem(slug: model.slug);
-                    // There was no other way to refresh the list without referencing this
-                    // global array of references because FetchItemCubit is littered
-                    // everywhere in the code, so you don't really know which
-                    // reference belongs to which cubit. Hence, this temporary
-                    // but dirty solution to avoid breaking the system.
-                    // TODO: Refactor this entire global references of cubit
-                    myAdsCubitReference[widget.tabStatus]?.fetchMyItems(
-                      getItemsWithStatus: widget.tabStatus,
+                    // Use centralized refresh cubit instead of global references
+                    context.read<MyItemsRefreshCubit>().refreshItemsWithStatus(
+                      widget.tabStatus,
                     );
                     LoadingWidgets.hideLoader(context);
                   } else if (changeState is RenewItemFailure) {

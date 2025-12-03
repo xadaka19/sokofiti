@@ -76,6 +76,7 @@ dependencies:
   open_file: ^3.5.10
   timeago: ^3.7.1
   timeago_flutter: ^3.7.0
+  flutter_secure_storage: ^9.2.4
 
 
 

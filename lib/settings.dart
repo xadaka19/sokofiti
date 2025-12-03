@@ -28,10 +28,10 @@ class PaymentGateway {
 class AppSettings {
   /// Basic Settings
 
-  static const String applicationName = 'eClassify';
-  static const String packageName = 'com.eclassify.wrteam';
+  static const String applicationName = 'Sokofiti';
+  static const String packageName = 'com.sokofiti.app';
 
-  static const String hostUrl = "https://eclassify.wrteam.me";
+  static const String hostUrl = "https://eclassify.wrteam.me"; // TODO: Update to your backend URL
 
   ///API Setting
 
@@ -41,14 +41,14 @@ class AppSettings {
 
   static const int hiddenAPIProcessDelay = 1;
 
-  static const String shareNavigationWebUrl = "eclassifyweb.wrteam.me";
+  static const String shareNavigationWebUrl = "sokofiti.com"; // TODO: Update to your web URL
 
   static const MapType googleMapType = MapType.normal;
 
   static const int otpResendSecond = 60;
   static const int otpTimeOutSecond = 60;
 
-  static const String defaultCountryCode = "91";
+  static const String defaultCountryCode = "254"; // Kenya country code
   static const bool disableCountrySelection = false;
 
   static const String successLoadingLottieFile = "loading_success.json";

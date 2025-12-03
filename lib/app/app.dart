@@ -3,6 +3,9 @@ import 'package:eClassify/main.dart';
 import 'package:eClassify/ui/screens/widgets/errors/something_went_wrong.dart';
 import 'package:eClassify/utils/constant.dart';
 import 'package:eClassify/utils/hive_keys.dart';
+import 'package:eClassify/utils/hive_utils.dart';
+import 'package:eClassify/utils/security/device_security_service.dart';
+import 'package:eClassify/utils/security/secure_storage_service.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -48,6 +51,19 @@ Future<void> initApp() async {
 
     // Initialize Hive and open boxes
     await _initializeHive();
+
+    // Initialize secure storage for sensitive data
+    await SecureStorageService.init();
+
+    // Load JWT from secure storage into cache
+    await HiveUtils.getJWTAsync();
+
+    // Check device security (root/jailbreak detection)
+    final isCompromised = await DeviceSecurityService.isDeviceCompromised();
+    if (isCompromised && kReleaseMode) {
+      debugPrint('WARNING: Device appears to be rooted/jailbroken');
+      // You can choose to block the app here or show a warning
+    }
 
     // Configure system UI and launch app
     await _configureSystemUI();

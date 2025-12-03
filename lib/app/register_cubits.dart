@@ -35,6 +35,7 @@ import 'package:eClassify/data/cubits/item/fetch_item_from_category_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_my_featured_items_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_my_item_cubit.dart';
 import 'package:eClassify/data/cubits/item/fetch_popular_items_cubit.dart';
+import 'package:eClassify/data/cubits/item/my_items_refresh_cubit.dart';
 import 'package:eClassify/data/cubits/item/item_total_click_cubit.dart';
 import 'package:eClassify/data/cubits/item/job_application/fetch_job_application_cubit.dart';
 import 'package:eClassify/data/cubits/item/related_item_cubit.dart';
@@ -123,6 +124,7 @@ class RegisterCubits {
     BlocProvider(create: (context) => DeleteMessageCubit()),
     BlocProvider(create: (context) => LoadChatMessagesCubit()),
     BlocProvider(create: (context) => FetchMyItemsCubit()),
+    BlocProvider(create: (context) => MyItemsRefreshCubit()),
     BlocProvider(create: (context) => UpdatedReportItemCubit()),
     BlocProvider(create: (context) => BlockedUsersListCubit()),
     BlocProvider(create: (context) => BlockUserCubit()),

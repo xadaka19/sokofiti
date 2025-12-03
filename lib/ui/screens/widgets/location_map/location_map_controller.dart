@@ -24,13 +24,25 @@ class MapData {
   final double radius;
 }
 
+/// Callback type for fetching the current saved location.
+/// This allows the controller to be decoupled from HiveUtils.
+typedef LocationProvider = LeafLocation? Function();
+
 class LocationMapController extends ChangeNotifier {
+  /// Creates a LocationMapController.
+  ///
+  /// [initialCoordinates] - Optional fixed coordinates (used in ad_details_screen)
+  /// [initialLocation] - Optional initial location to use
+  /// [locationProvider] - Callback to get the saved location (defaults to HiveUtils.getLocationV2)
   LocationMapController({
     this.initialCoordinates,
     LeafLocation? initialLocation,
-  }) : _location = initialLocation ?? LeafLocation();
+    LocationProvider? locationProvider,
+  }) : _location = initialLocation ?? LeafLocation(),
+       _locationProvider = locationProvider ?? HiveUtils.getLocationV2;
 
   final LatLng? initialCoordinates;
+  final LocationProvider _locationProvider;
 
   GoogleMapController? _mapController;
   final LocationUtility _locationUtility = LocationUtility();
@@ -66,8 +78,8 @@ class LocationMapController extends ChangeNotifier {
       _radius = 1;
       _updatePosition(initialCoordinates!);
     } else {
-      // TODO(rio): Do not directly use HiveUtils here.
-      final location = HiveUtils.getLocationV2();
+      // Use injected location provider instead of direct HiveUtils access
+      final location = _locationProvider();
 
       if (location == null || !location.hasCoordinates) {
         _location = Constant.defaultLocation;

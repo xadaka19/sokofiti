@@ -59,12 +59,12 @@ class Constant {
   // It’s used as the default location in multiple spots, and weird things *will* happen without it.
   // Feel free to tweak the values, just don’t nuke the whole thing.
   static LeafLocation defaultLocation = LeafLocation(
-    city: LocalizedString(canonical: 'Bhuj'),
-    state: LocalizedString(canonical: 'Gujarat'),
-    country: LocalizedString(canonical: 'India'),
+    city: LocalizedString(canonical: 'Nairobi'),
+    state: LocalizedString(canonical: 'Nairobi County'),
+    country: LocalizedString(canonical: 'Kenya'),
     radius: 100.0,
-    latitude: 23.232639,
-    longitude: 69.6415341,
+    latitude: -1.286389,
+    longitude: 36.817223,
   );
 
   static int otpTimeOutSecond = AppSettings.otpTimeOutSecond; //otp time out

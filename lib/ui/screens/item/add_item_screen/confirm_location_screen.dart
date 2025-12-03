@@ -7,7 +7,7 @@ import 'package:eClassify/data/cubits/item/manage_item_cubit.dart';
 import 'package:eClassify/data/model/item/item_model.dart';
 import 'package:eClassify/data/model/localized_string.dart';
 import 'package:eClassify/data/model/location/leaf_location.dart';
-import 'package:eClassify/ui/screens/item/my_item_tab_screen.dart';
+import 'package:eClassify/data/cubits/item/my_items_refresh_cubit.dart';
 import 'package:eClassify/ui/screens/widgets/location_map/location_map_controller.dart';
 import 'package:eClassify/ui/screens/widgets/location_map/location_map_widget.dart';
 import 'package:eClassify/ui/theme/theme.dart';
@@ -135,8 +135,9 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
                   LoadingWidgets.showLoader(context);
                 } else if (state is ManageItemSuccess) {
                   LoadingWidgets.hideLoader(context);
-                  myAdsCubitReference[getCloudData("edit_from")]?.editAds(
-                    state.model,
+                  // Notify My Items tabs to refresh
+                  context.read<MyItemsRefreshCubit>().refreshItemsWithStatus(
+                    getCloudData("edit_from") as String?,
                   );
 
                   Navigator.pushNamed(
