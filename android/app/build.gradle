@@ -101,10 +101,12 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.debug
-            // Enable code obfuscation and optimization
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // TEMPORARILY DISABLED: R8 minification causes OOM on CI
+            // Re-enable once CI has sufficient memory (8GB+)
+            // TODO: Enable minifyEnabled and shrinkResources for production
+            minifyEnabled false
+            shrinkResources false
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false
