@@ -486,7 +486,7 @@ class _MyItemTabState extends CloudState<MyItemTab> {
                                                       width: 116,
                                                       height: double.infinity,
                                                       child: UiUtils.getImage(
-                                                        item.image ?? "",
+                                                        item.displayImage ?? "",
                                                         height: double.infinity,
                                                         fit: BoxFit.cover,
                                                       ),

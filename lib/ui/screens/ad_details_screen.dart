@@ -223,10 +223,11 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
   }
 
   void combineImages() {
-    images.add(model.image);
+    // Use watermarked images for public display
+    images.add(model.displayImage);
     if (model.galleryImages != null && model.galleryImages!.isNotEmpty) {
       for (var element in model.galleryImages!) {
-        images.add(element.image);
+        images.add(element.displayImage);
       }
     }
 
@@ -1250,7 +1251,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                       "itemId": model.id,
                       "price": model.price,
                       "itemName": model.translatedName,
-                      "itemImage": model.image,
+                      "itemImage": model.displayImage,
                       "isJobCategory": model.category!.isJobCategory == 1,
                     },
                   );
@@ -1333,7 +1334,7 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                               userName: model.user!.name!,
                               userId: model.user!.id!.toString(),
                               from: "item",
-                              itemImage: model.image!,
+                              itemImage: model.displayImage ?? "",
                               itemId: model.id.toString(),
                               date: model.created!,
                               itemTitle: model.translatedName!,
@@ -1465,8 +1466,8 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
                                               : null,
                                           itemImage:
                                               chatedUser.item != null &&
-                                                  chatedUser.item!.image != null
-                                              ? chatedUser.item!.image!
+                                                  chatedUser.item!.displayImage != null
+                                              ? chatedUser.item!.displayImage!
                                               : "",
                                           itemTitle:
                                               chatedUser.item != null &&

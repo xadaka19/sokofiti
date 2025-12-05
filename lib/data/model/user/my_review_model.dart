@@ -165,9 +165,17 @@ class Item {
   LocalizedString? name;
   int? price;
   String? image;
+  String? watermarkImage;
   LocalizedString? description;
 
-  Item({this.id, this.name, this.price, this.image, this.description});
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of item images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage!.isNotEmpty)
+          ? watermarkImage
+          : image;
+
+  Item({this.id, this.name, this.price, this.image, this.watermarkImage, this.description});
 
   Item.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -177,6 +185,7 @@ class Item {
     );
     price = json['price'];
     image = json['image'];
+    watermarkImage = json['watermark_image'];
     description = LocalizedString(
       canonical: json['description'] as String,
       translated: json['translated_description'] as String,
@@ -189,6 +198,7 @@ class Item {
     data['name'] = this.name;
     data['price'] = this.price;
     data['image'] = this.image;
+    data['watermark_image'] = this.watermarkImage;
     data['description'] = this.description;
     return data;
   }
