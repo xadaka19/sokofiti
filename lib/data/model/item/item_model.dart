@@ -64,6 +64,13 @@ class ItemModel {
 
   String? get translatedAdminEditReason => translatedItem?['admin_edit_reason'];
 
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of item images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage.toString().isNotEmpty)
+          ? watermarkImage.toString()
+          : image;
+
   double? get latitude => _latitude;
 
   set latitude(dynamic value) {
@@ -343,13 +350,22 @@ class User {
 class GalleryImages {
   int? id;
   String? image;
+  String? watermarkImage;
   String? createdAt;
   String? updatedAt;
   int? itemId;
 
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of gallery images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage!.isNotEmpty)
+          ? watermarkImage
+          : image;
+
   GalleryImages({
     this.id,
     this.image,
+    this.watermarkImage,
     this.createdAt,
     this.updatedAt,
     this.itemId,
@@ -358,6 +374,7 @@ class GalleryImages {
   GalleryImages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     image = json['image'];
+    watermarkImage = json['watermark_image'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     itemId = json['item_id'];
@@ -367,6 +384,7 @@ class GalleryImages {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['image'] = image;
+    data['watermark_image'] = watermarkImage;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['item_id'] = itemId;

@@ -208,8 +208,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                               : "",
                           itemPicture:
                               chatedUser.item != null &&
-                                  chatedUser.item!.image != null
-                              ? chatedUser.item!.image!
+                                  chatedUser.item!.displayImage != null
+                              ? chatedUser.item!.displayImage!
                               : "",
                           itemName:
                               chatedUser.item != null &&
@@ -307,8 +307,8 @@ class _ChatListScreenState extends State<ChatListScreen>
                           userName: chatedUser.buyer?.name ?? "",
                           itemPicture:
                               chatedUser.item != null &&
-                                  chatedUser.item!.image != null
-                              ? chatedUser.item!.image!
+                                  chatedUser.item!.displayImage != null
+                              ? chatedUser.item!.displayImage!
                               : "",
                           itemName:
                               chatedUser.item != null &&

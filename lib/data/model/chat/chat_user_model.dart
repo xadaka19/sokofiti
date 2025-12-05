@@ -134,9 +134,17 @@ class Item {
   LocalizedString? description;
   double? price;
   String? image;
+  String? watermarkImage;
   String? status;
   int? isPurchased;
   UserRatings? review;
+
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of item images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage!.isNotEmpty)
+          ? watermarkImage
+          : image;
 
   Item({
     this.id,
@@ -144,6 +152,7 @@ class Item {
     this.description,
     this.price,
     this.image,
+    this.watermarkImage,
     this.status,
     this.review,
     this.isPurchased,
@@ -161,6 +170,7 @@ class Item {
     );
     price = (json['price'] as num?)?.toDouble();
     image = json['image'];
+    watermarkImage = json['watermark_image'];
     status = json['status'];
     status = json['status'];
     isPurchased = json['is_purchased'];
@@ -176,6 +186,7 @@ class Item {
     data['description'] = this.description;
     data['price'] = this.price;
     data['image'] = this.image;
+    data['watermark_image'] = this.watermarkImage;
     data['status'] = this.status;
     data['is_purchased'] = this.isPurchased;
     data['review'] = review!.toJson();

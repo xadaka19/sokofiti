@@ -1,13 +1,36 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="250" height="147" viewBox="0 0 250 147">
-  <g id="placeholder" transform="translate(12595 5840)">
-    <rect id="image" width="250" height="147" transform="translate(-12595 -5840)" fill="none"/>
-    <g id="mainlogo" transform="translate(-12521 -5817)" opacity="0.33">
-      <rect id="logoback" width="102" height="102" fill="none"/>
-      <g id="logo" transform="translate(36.12 4.121)">
-        <rect id="back" width="102" height="102" transform="translate(-36.12 -4.121)" fill="none"/>
-        <path id="Path_16339" data-name="Path 16339" d="M5.423,243.619a5.422,5.422,0,0,1-4.229-8.813L10.832,222.8a5.424,5.424,0,0,1,8.464,6.784L9.659,241.589a5.415,5.415,0,0,1-4.235,2.03Z" transform="translate(-23.714 -148.548)" fill="#00b2ca"/>
-        <path id="Path_16340" data-name="Path 16340" d="M94.4,100.084a19.067,19.067,0,1,1,14.531-31.424,4.063,4.063,0,0,1-.312,5.6l-7.538,7.075a4.067,4.067,0,1,1-5.572-5.926l4.208-3.951a10.935,10.935,0,1,0,3.038,16.62,4.067,4.067,0,0,1,6.209,5.256,19.062,19.062,0,0,1-14.568,6.75Z" transform="translate(-73.491 -43.542)" fill="#fa6e53"/>
-        <path id="Path_16341" data-name="Path 16341" d="M52.543,79.723a39.862,39.862,0,1,1,30.381-65.7,5.425,5.425,0,0,1-8.264,7.031A29.021,29.021,0,1,0,74.71,58.6a5.424,5.424,0,0,1,8.281,7.007A39.849,39.849,0,0,1,52.539,79.72Z" transform="translate(-32.073 -2.583)" fill="#00b2ca"/>
+  <g id="placeholder" opacity="0.33">
+    <rect width="250" height="147" fill="none"/>
+    
+    <!-- Centered mini logo -->
+    <g transform="translate(75, 10) scale(0.85)">
+      <!-- Yellow bag (behind, right) -->
+      <g id="yellow-bag">
+        <path d="M82,38 L82,105 Q82,115 92,115 L125,115 Q135,115 135,105 L135,38 Q135,28 125,28 L92,28 Q82,28 82,38 Z" fill="#F7B917"/>
+        <path d="M95,28 Q95,12 108.5,12 Q122,12 122,28" fill="none" stroke="#2D2D2D" stroke-width="4.5" stroke-linecap="round"/>
+        <circle cx="95" cy="28" r="4" fill="#fff"/>
+        <circle cx="122" cy="28" r="4" fill="#fff"/>
+      </g>
+      
+      <!-- Green bag (front, left) -->
+      <g id="green-bag">
+        <path d="M15,45 L15,120 Q15,132 27,132 L85,132 Q97,132 97,120 L97,45 Q97,33 85,33 L27,33 Q15,33 15,45 Z" fill="#3B8A3E"/>
+        <path d="M35,33 Q35,10 56,10 Q77,10 77,33" fill="none" stroke="#2D2D2D" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="35" cy="33" r="5" fill="#fff"/>
+        <circle cx="77" cy="33" r="5" fill="#fff"/>
+        
+        <!-- Hand/Click icon -->
+        <g id="click-icon" transform="translate(22, 52)">
+          <circle cx="18" cy="18" r="14" fill="none" stroke="#fff" stroke-width="3"/>
+          <circle cx="18" cy="18" r="8" fill="none" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="18" cy="18" r="3" fill="#fff"/>
+          <path d="M18,32 L18,48 M12,42 L18,48 L24,42" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </g>
+      </g>
+      
+      <!-- S letter -->
+      <g id="s-letter">
+        <text x="68" y="118" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="90" font-weight="900" fill="#fff" stroke="#2D2D2D" stroke-width="4" stroke-linejoin="round">S</text>
       </g>
     </g>
   </g>

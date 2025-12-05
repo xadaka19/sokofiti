@@ -637,7 +637,7 @@ class MyReviewScreenState extends State<MyReviewScreen>
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: UiUtils.imageType(
-              ratings.item!.image!,
+              ratings.item!.displayImage ?? "",
               fit: BoxFit.cover,
               height: 70,
               width: 70,

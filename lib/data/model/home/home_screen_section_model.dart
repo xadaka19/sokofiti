@@ -46,7 +46,7 @@ class SectionData {
   String? description;
   int? price;
   String? image;
-  Null watermarkImage;
+  String? watermarkImage;
   double? latitude;
   double? longitude;
   String? address;
@@ -60,6 +60,13 @@ class SectionData {
   int? clicks;
   int? likes;
   List<CustomFields>? customFields;
+
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of item images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage!.isNotEmpty)
+          ? watermarkImage
+          : image;
 
   SectionData(
       {this.id,
@@ -88,7 +95,7 @@ class SectionData {
     description = json['description'];
     price = json['price'];
     image = json['image'];
-    watermarkImage = json['watermarkimage'];
+    watermarkImage = json['watermark_image'];
     latitude = json['latitude'];
     longitude = json['longitude'];
     address = json['address'];
@@ -123,7 +130,7 @@ class SectionData {
     data['description'] = description;
     data['price'] = price;
     data['image'] = image;
-    data['watermarkimage'] = watermarkImage;
+    data['watermark_image'] = watermarkImage;
     data['latitude'] = latitude;
     data['longitude'] = longitude;
     data['address'] = address;
@@ -215,16 +222,25 @@ class UserDetails {
 class GalleryImages {
   int? id;
   String? image;
+  String? watermarkImage;
   String? createdAt;
   String? updatedAt;
   int? itemId;
 
+  /// Returns the watermarked image if available, otherwise falls back to the original image.
+  /// Use this for public display of gallery images.
+  String? get displayImage =>
+      (watermarkImage != null && watermarkImage!.isNotEmpty)
+          ? watermarkImage
+          : image;
+
   GalleryImages(
-      {this.id, this.image, this.createdAt, this.updatedAt, this.itemId});
+      {this.id, this.image, this.watermarkImage, this.createdAt, this.updatedAt, this.itemId});
 
   GalleryImages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     image = json['image'];
+    watermarkImage = json['watermark_image'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     itemId = json['item_id'];
@@ -234,6 +250,7 @@ class GalleryImages {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['image'] = image;
+    data['watermark_image'] = watermarkImage;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
     data['item_id'] = itemId;

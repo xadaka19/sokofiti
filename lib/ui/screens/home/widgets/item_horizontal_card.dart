@@ -141,7 +141,7 @@ class ItemHorizontalCard extends StatelessWidget {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(15),
                                 child: UiUtils.getImage(
-                                  item.image ?? "",
+                                  item.displayImage ?? "",
                                   height: addBottom == null
                                       ? 122
                                       : (122 + (additionalHeight ?? 0)),
