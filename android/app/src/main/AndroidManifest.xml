@@ -87,11 +87,11 @@
 
 
                 <data
-                    android:host="sokofiti.com"
+                    android:host="sokofiti.ke"
                     android:pathPattern="/ad-details/.*"
                     android:scheme="sokofiti" />
                 <data
-                    android:host="sokofiti.com"
+                    android:host="sokofiti.ke"
                     android:pathPattern="/seller/.*"
                     android:scheme="sokofiti" />
             </intent-filter>

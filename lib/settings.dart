@@ -31,7 +31,7 @@ class AppSettings {
   static const String applicationName = 'Sokofiti';
   static const String packageName = 'com.sokofiti.app';
 
-  static const String hostUrl = "https://eclassify.wrteam.me"; // TODO: Update to your backend URL
+  static const String hostUrl = "https://admin.sokofiti.ke";
 
   ///API Setting
 
@@ -41,7 +41,7 @@ class AppSettings {
 
   static const int hiddenAPIProcessDelay = 1;
 
-  static const String shareNavigationWebUrl = "sokofiti.com"; // TODO: Update to your web URL
+  static const String shareNavigationWebUrl = "sokofiti.ke";
 
   static const MapType googleMapType = MapType.normal;
 
