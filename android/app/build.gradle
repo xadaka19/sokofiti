@@ -100,7 +100,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             // TEMPORARILY DISABLED: R8 minification causes OOM on CI
             // Re-enable once CI has sufficient memory (8GB+)
             // TODO: Enable minifyEnabled and shrinkResources for production
