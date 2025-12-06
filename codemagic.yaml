@@ -1,35 +1,41 @@
 workflows:
   android-release:
     name: Android Release Build
-    # Use mac_mini_m2 which has 8GB RAM, or mac_pro for 16GB+ RAM
-    instance_type: mac_mini_m2
+    # Use mac_pro for 16GB+ RAM to avoid OOM during build
+    instance_type: mac_pro
     max_build_duration: 60
-    
+
     environment:
       flutter: stable
       java: 17
       groups:
         - google_play  # Add your environment variable group name here
       vars:
-        JAVA_TOOL_OPTIONS: "-Xmx6g"
-    
+        # Limit Java heap to leave room for other processes
+        JAVA_TOOL_OPTIONS: "-Xmx4g"
+        # Gradle-specific JVM args (overrides gradle.properties on CI)
+        GRADLE_OPTS: "-Xmx4g -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=false"
+
     scripts:
       - name: Set up local.properties
         script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
-      
+
       - name: Get Flutter packages
         script: flutter pub get
-      
+
+      - name: Clean Gradle cache (prevent stale DEX issues)
+        script: cd android && ./gradlew clean
+
       - name: Build Android App Bundle
         script: |
           flutter build appbundle --release \
             --dart-define=FLUTTER_BUILD_MODE=release
-    
+
     artifacts:
       - build/**/outputs/**/*.aab
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
-    
+
     publishing:
       google_play:
         credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
