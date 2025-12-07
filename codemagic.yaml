@@ -20,6 +20,28 @@ workflows:
       - name: Set up local.properties
         script: echo "flutter.sdk=$HOME/programs/flutter" > "$CM_BUILD_DIR/android/local.properties"
 
+      - name: Set up keystore and key.properties
+        script: |
+          # If using Codemagic's code signing, the keystore is at CM_KEYSTORE_PATH
+          # Otherwise, use the one committed in the repo
+
+          KEYSTORE_PATH="${CM_KEYSTORE_PATH:-$CM_BUILD_DIR/android/app/release-keystore.jks}"
+
+          echo "🔹 Using keystore at: $KEYSTORE_PATH"
+          ls -la "$KEYSTORE_PATH" || echo "❌ Keystore not found at $KEYSTORE_PATH"
+
+          # Create key.properties file
+          cat > "$CM_BUILD_DIR/android/key.properties" << EOF
+          storePassword=${CM_KEYSTORE_PASSWORD:-Djabari2019#}
+          keyPassword=${CM_KEY_PASSWORD:-Djabari2019#}
+          keyAlias=${CM_KEY_ALIAS:-sokofiti}
+          storeFile=$KEYSTORE_PATH
+          EOF
+
+          echo "🔹 key.properties created successfully"
+          echo "🔹 Contents (passwords hidden):"
+          grep -v "Password" "$CM_BUILD_DIR/android/key.properties"
+
       - name: Get Flutter packages
         script: flutter pub get
 
@@ -31,8 +53,14 @@ workflows:
           flutter build appbundle --release \
             --dart-define=FLUTTER_BUILD_MODE=release
 
+      - name: Build Android APK (optional)
+        script: |
+          flutter build apk --release \
+            --dart-define=FLUTTER_BUILD_MODE=release
+
     artifacts:
       - build/**/outputs/**/*.aab
+      - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
 
