@@ -11,10 +11,10 @@ workflows:
       groups:
         - google_play  # Add your environment variable group name here
       vars:
-        # Limit Java heap to leave room for other processes
-        JAVA_TOOL_OPTIONS: "-Xmx4g"
+        # Increase Java heap for L8 desugaring which requires more memory
+        JAVA_TOOL_OPTIONS: "-Xmx6g"
         # Gradle-specific JVM args (overrides gradle.properties on CI)
-        GRADLE_OPTS: "-Xmx4g -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=false"
+        GRADLE_OPTS: "-Xmx6g -Dorg.gradle.jvmargs=-Xmx6g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
 
     scripts:
       - name: Set up local.properties
@@ -45,22 +45,20 @@ workflows:
       - name: Get Flutter packages
         script: flutter pub get
 
-      - name: Clean Gradle cache (prevent stale DEX issues)
-        script: cd android && ./gradlew clean
+      - name: Clean Gradle cache and free memory
+        script: |
+          cd android && ./gradlew clean --no-daemon
+          # Kill any stale Gradle daemons to free memory
+          ./gradlew --stop || true
 
       - name: Build Android App Bundle
         script: |
+          # Build only AAB for Play Store (saves memory vs building both)
           flutter build appbundle --release \
-            --dart-define=FLUTTER_BUILD_MODE=release
-
-      - name: Build Android APK (optional)
-        script: |
-          flutter build apk --release \
             --dart-define=FLUTTER_BUILD_MODE=release
 
     artifacts:
       - build/**/outputs/**/*.aab
-      - build/**/outputs/**/*.apk
       - build/**/outputs/**/mapping.txt
       - flutter_drive.log
 
