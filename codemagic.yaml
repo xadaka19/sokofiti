@@ -25,37 +25,32 @@ workflows:
           # Decode base64 CM_KEYSTORE and create the keystore file
           if [ -n "$CM_KEYSTORE" ]; then
             echo "🔹 Decoding CM_KEYSTORE from base64..."
-            KEYSTORE_PATH="$CM_BUILD_DIR/android/app/release-keystore.jks"
-            echo "$CM_KEYSTORE" | base64 --decode > "$KEYSTORE_PATH"
-            echo "✅ Keystore decoded to: $KEYSTORE_PATH"
-
+            echo "$CM_KEYSTORE" | base64 --decode > "$CM_BUILD_DIR/android/app/release-keystore.jks"
             KEYSTORE_PASSWORD="$CM_KEYSTORE_PASSWORD"
             KEY_PASSWORD="$CM_KEY_PASSWORD"
             KEY_ALIAS="$CM_KEY_ALIAS"
           else
             echo "🔹 Using release keystore from repo"
-            KEYSTORE_PATH="$CM_BUILD_DIR/android/app/release-keystore.jks"
             KEYSTORE_PASSWORD="Djabari2019#"
             KEY_PASSWORD="Djabari2019#"
             KEY_ALIAS="sokofiti"
           fi
 
-          echo "🔹 Keystore path: $KEYSTORE_PATH"
-          echo "🔹 Key alias: $KEY_ALIAS"
-          ls -la "$KEYSTORE_PATH" || echo "❌ Keystore not found at $KEYSTORE_PATH"
+          echo "🔹 Creating key.properties..."
 
-          # Create key.properties file with release keystore (NO leading spaces!)
+          # IMPORTANT: storeFile MUST BE RELATIVE (resolved from android/app/)
           echo "storePassword=$KEYSTORE_PASSWORD" > "$CM_BUILD_DIR/android/key.properties"
           echo "keyPassword=$KEY_PASSWORD" >> "$CM_BUILD_DIR/android/key.properties"
           echo "keyAlias=$KEY_ALIAS" >> "$CM_BUILD_DIR/android/key.properties"
-          echo "storeFile=$KEYSTORE_PATH" >> "$CM_BUILD_DIR/android/key.properties"
+          echo "storeFile=release-keystore.jks" >> "$CM_BUILD_DIR/android/key.properties"
 
-          echo "🔹 key.properties created successfully"
-          echo "🔹 Verifying key.properties contents:"
+          echo "🔹 Final key.properties:"
           cat "$CM_BUILD_DIR/android/key.properties" | sed 's/Password=.*/Password=***HIDDEN***/'
 
-          echo "🔹 Verifying keystore file exists and is valid:"
-          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" 2>&1 | head -5 || echo "❌ Keystore verification failed!"
+          echo "🔹 Verifying keystore:"
+          keytool -list -keystore "$CM_BUILD_DIR/android/app/release-keystore.jks" \
+            -storepass "$KEYSTORE_PASSWORD" \
+            -alias "$KEY_ALIAS" | head -10
 
       - name: Get Flutter packages
         script: flutter pub get
@@ -68,7 +63,14 @@ workflows:
 
       - name: Build Android App Bundle
         script: |
-          # Build only AAB for Play Store (saves memory vs building both)
+          # Final verification before build
+          echo "🔹 Final key.properties check:"
+          cat "$CM_BUILD_DIR/android/key.properties" | sed 's/Password=.*/Password=***HIDDEN***/'
+
+          echo "🔹 Verifying keystore file exists:"
+          ls -la "$CM_BUILD_DIR/android/app/release-keystore.jks"
+
+          # Build only AAB for Play Store
           flutter build appbundle --release \
             --dart-define=FLUTTER_BUILD_MODE=release
 
