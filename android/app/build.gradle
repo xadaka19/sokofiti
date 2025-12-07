@@ -33,6 +33,22 @@ def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    println "✅ key.properties loaded successfully"
+    println "   storeFile: ${keystoreProperties['storeFile']}"
+    println "   keyAlias: ${keystoreProperties['keyAlias']}"
+
+    // Verify keystore file exists
+    def storeFilePath = keystoreProperties['storeFile']
+    if (storeFilePath) {
+        def keystoreFile = file(storeFilePath)
+        if (keystoreFile.exists()) {
+            println "✅ Keystore file exists at: ${keystoreFile.absolutePath}"
+        } else {
+            println "❌ ERROR: Keystore file NOT found at: ${storeFilePath}"
+        }
+    }
+} else {
+    println "❌ ERROR: key.properties file not found at: ${keystorePropertiesFile.absolutePath}"
 }
 
 
@@ -91,10 +107,19 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(keystoreProperties['storeFile'])
+            def storeFilePath = keystoreProperties['storeFile']
+            if (storeFilePath == null || storeFilePath.isEmpty()) {
+                throw new RuntimeException("storeFile not set in key.properties")
+            }
+            def keystoreFile = file(storeFilePath)
+            if (!keystoreFile.exists()) {
+                throw new RuntimeException("Keystore file not found: ${keystoreFile.absolutePath}")
+            }
+            storeFile keystoreFile
             storePassword keystoreProperties['storePassword']
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
+            println "✅ Release signing config loaded successfully"
         }
     }
 
