@@ -22,11 +22,13 @@ workflows:
 
       - name: Set up keystore and key.properties
         script: |
-          # Check if Codemagic provides a release keystore (from Code Signing settings)
-          # If not, fall back to the repo keystore
-          if [ -n "$CM_KEYSTORE" ] && [ "$CM_KEY_ALIAS" != "androiddebugkey" ]; then
-            echo "🔹 Using Codemagic-provided release keystore"
-            KEYSTORE_PATH="$CM_KEYSTORE_PATH"
+          # Decode base64 CM_KEYSTORE and create the keystore file
+          if [ -n "$CM_KEYSTORE" ]; then
+            echo "🔹 Decoding CM_KEYSTORE from base64..."
+            KEYSTORE_PATH="$CM_BUILD_DIR/android/app/release-keystore.jks"
+            echo "$CM_KEYSTORE" | base64 --decode > "$KEYSTORE_PATH"
+            echo "✅ Keystore decoded to: $KEYSTORE_PATH"
+
             KEYSTORE_PASSWORD="$CM_KEYSTORE_PASSWORD"
             KEY_PASSWORD="$CM_KEY_PASSWORD"
             KEY_ALIAS="$CM_KEY_ALIAS"
