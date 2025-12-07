@@ -22,18 +22,30 @@ workflows:
 
       - name: Set up keystore and key.properties
         script: |
-          # If using Codemagic's code signing, the keystore is at CM_KEYSTORE_PATH
-          # Otherwise, use the one committed in the repo
+          # Check if Codemagic provides a release keystore (from Code Signing settings)
+          # If not, fall back to the repo keystore
+          if [ -n "$CM_KEYSTORE" ] && [ "$CM_KEY_ALIAS" != "androiddebugkey" ]; then
+            echo "🔹 Using Codemagic-provided release keystore"
+            KEYSTORE_PATH="$CM_KEYSTORE_PATH"
+            KEYSTORE_PASSWORD="$CM_KEYSTORE_PASSWORD"
+            KEY_PASSWORD="$CM_KEY_PASSWORD"
+            KEY_ALIAS="$CM_KEY_ALIAS"
+          else
+            echo "🔹 Using release keystore from repo"
+            KEYSTORE_PATH="$CM_BUILD_DIR/android/app/release-keystore.jks"
+            KEYSTORE_PASSWORD="Djabari2019#"
+            KEY_PASSWORD="Djabari2019#"
+            KEY_ALIAS="sokofiti"
+          fi
 
-          KEYSTORE_PATH="${CM_KEYSTORE_PATH:-$CM_BUILD_DIR/android/app/release-keystore.jks}"
-
-          echo "🔹 Using keystore at: $KEYSTORE_PATH"
+          echo "🔹 Keystore path: $KEYSTORE_PATH"
+          echo "🔹 Key alias: $KEY_ALIAS"
           ls -la "$KEYSTORE_PATH" || echo "❌ Keystore not found at $KEYSTORE_PATH"
 
-          # Create key.properties file (NO leading spaces - critical!)
-          echo "storePassword=${CM_KEYSTORE_PASSWORD:-Djabari2019#}" > "$CM_BUILD_DIR/android/key.properties"
-          echo "keyPassword=${CM_KEY_PASSWORD:-Djabari2019#}" >> "$CM_BUILD_DIR/android/key.properties"
-          echo "keyAlias=${CM_KEY_ALIAS:-sokofiti}" >> "$CM_BUILD_DIR/android/key.properties"
+          # Create key.properties file with release keystore (NO leading spaces!)
+          echo "storePassword=$KEYSTORE_PASSWORD" > "$CM_BUILD_DIR/android/key.properties"
+          echo "keyPassword=$KEY_PASSWORD" >> "$CM_BUILD_DIR/android/key.properties"
+          echo "keyAlias=$KEY_ALIAS" >> "$CM_BUILD_DIR/android/key.properties"
           echo "storeFile=$KEYSTORE_PATH" >> "$CM_BUILD_DIR/android/key.properties"
 
           echo "🔹 key.properties created successfully"
@@ -41,7 +53,7 @@ workflows:
           cat "$CM_BUILD_DIR/android/key.properties" | sed 's/Password=.*/Password=***HIDDEN***/'
 
           echo "🔹 Verifying keystore file exists and is valid:"
-          keytool -list -keystore "$KEYSTORE_PATH" -storepass "${CM_KEYSTORE_PASSWORD:-Djabari2019#}" -alias "${CM_KEY_ALIAS:-sokofiti}" 2>&1 | head -5 || echo "❌ Keystore verification failed!"
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" 2>&1 | head -5 || echo "❌ Keystore verification failed!"
 
       - name: Get Flutter packages
         script: flutter pub get
