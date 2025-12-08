@@ -127,10 +127,10 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // Enable R8 minification for smaller APK and obfuscation
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // R8 minification disabled - causes OOM even with 16GB RAM
+            // The deobfuscation warning in Play Console can be ignored
+            minifyEnabled false
+            shrinkResources false
         }
         debug {
             minifyEnabled false
