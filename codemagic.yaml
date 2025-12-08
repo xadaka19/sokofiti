@@ -1,8 +1,8 @@
 workflows:
   android-release:
     name: Android Release Build
-    # Use mac_pro for 16GB+ RAM to avoid OOM during build
-    instance_type: mac_pro
+    # Use mac_pro_m2 for 32GB RAM to handle R8 minification
+    instance_type: mac_pro_m2
     max_build_duration: 60
 
     environment:
@@ -11,10 +11,10 @@ workflows:
       groups:
         - google_play  # Add your environment variable group name here
       vars:
-        # Increase Java heap for R8/L8 which requires more memory
-        JAVA_TOOL_OPTIONS: "-Xmx12g"
+        # Increase Java heap for R8/L8 which requires more memory (24GB of 32GB available)
+        JAVA_TOOL_OPTIONS: "-Xmx24g"
         # Gradle-specific JVM args (overrides gradle.properties on CI)
-        GRADLE_OPTS: "-Xmx12g -Dorg.gradle.jvmargs=-Xmx12g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
+        GRADLE_OPTS: "-Xmx24g -Dorg.gradle.jvmargs=-Xmx24g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
 
     scripts:
       - name: Set up local.properties

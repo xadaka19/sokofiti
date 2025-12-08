@@ -127,10 +127,10 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // R8 minification for smaller APK and obfuscation
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // R8 disabled - requires more memory than available (even 12GB fails)
+            // Play Console warning about deobfuscation can be safely ignored
+            minifyEnabled false
+            shrinkResources false
         }
         debug {
             minifyEnabled false
