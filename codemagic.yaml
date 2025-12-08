@@ -11,10 +11,10 @@ workflows:
       groups:
         - google_play  # Add your environment variable group name here
       vars:
-        # Increase Java heap for L8 desugaring which requires more memory
-        JAVA_TOOL_OPTIONS: "-Xmx8g"
+        # Increase Java heap for R8/L8 which requires more memory
+        JAVA_TOOL_OPTIONS: "-Xmx12g"
         # Gradle-specific JVM args (overrides gradle.properties on CI)
-        GRADLE_OPTS: "-Xmx8g -Dorg.gradle.jvmargs=-Xmx8g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
+        GRADLE_OPTS: "-Xmx12g -Dorg.gradle.jvmargs=-Xmx12g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
 
     scripts:
       - name: Set up local.properties
