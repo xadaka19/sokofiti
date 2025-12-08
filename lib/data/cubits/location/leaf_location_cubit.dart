@@ -15,7 +15,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// Think of it as a live feed of "where we at right now?" in the app.
 class LeafLocationCubit extends Cubit<LeafLocation?> {
   LeafLocationCubit() : super(null) {
-    final location = HiveUtils.getLocationV2() ?? Constant.defaultLocation;
+    // Default to null (Global) to show all ads from everywhere
+    // Users can then narrow down to their preferred location
+    final location = HiveUtils.getLocationV2();
     emit(location);
   }
 
