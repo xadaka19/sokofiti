@@ -140,3 +140,9 @@ app.*.symbols
 
 /lib/ui/screens/widgets/debug/
 /android/app/.cxx/
+
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+*.jks
+*.keystore
+.env
