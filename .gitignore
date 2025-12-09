@@ -146,3 +146,5 @@ ios/Runner/GoogleService-Info.plist
 *.jks
 *.keystore
 .env
+.env.local
+.env.*.local
