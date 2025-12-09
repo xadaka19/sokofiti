@@ -148,3 +148,5 @@ ios/Runner/GoogleService-Info.plist
 .env
 .env.local
 .env.*.local
+*.json
+
