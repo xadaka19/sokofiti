@@ -8,8 +8,10 @@ workflows:
     environment:
       flutter: stable
       java: 17
-      groups:
-        - google_play  # Add your environment variable group name here
+      # Note: For personal accounts, add environment variables in Codemagic UI
+      # (App settings > Environment variables)
+      # Required variables: GOOGLE_SERVICES_JSON, CM_KEYSTORE, CM_KEYSTORE_PASSWORD,
+      # CM_KEY_PASSWORD, CM_KEY_ALIAS, GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
       vars:
         # Increase Java heap for R8/L8 which requires more memory (24GB of 32GB available)
         JAVA_TOOL_OPTIONS: "-Xmx24g"
@@ -52,6 +54,17 @@ workflows:
             -storepass "$KEYSTORE_PASSWORD" \
             -alias "$KEY_ALIAS" | head -10
 
+      - name: Decode google-services.json
+        script: |
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            echo "🔹 Decoding google-services.json from base64..."
+            echo "$GOOGLE_SERVICES_JSON" | base64 --decode > "$CM_BUILD_DIR/android/app/google-services.json"
+            echo "✅ google-services.json created"
+          else
+            echo "❌ GOOGLE_SERVICES_JSON environment variable not set!"
+            exit 1
+          fi
+
       - name: Get Flutter packages
         script: flutter pub get
 
@@ -85,3 +98,64 @@ workflows:
         track: internal
         submit_as_draft: true
 
+  ios-release:
+    name: iOS Release Build
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+      # Note: For personal accounts, add environment variables in Codemagic UI
+      # Required variables: GOOGLE_SERVICE_INFO_PLIST, APP_STORE_CONNECT_PRIVATE_KEY,
+      # APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_ISSUER_ID
+      vars:
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+
+    scripts:
+      - name: Decode GoogleService-Info.plist
+        script: |
+          if [ -n "$GOOGLE_SERVICE_INFO_PLIST" ]; then
+            echo "🔹 Decoding GoogleService-Info.plist from base64..."
+            echo "$GOOGLE_SERVICE_INFO_PLIST" | base64 --decode > "$CM_BUILD_DIR/ios/Runner/GoogleService-Info.plist"
+            echo "✅ GoogleService-Info.plist created"
+          else
+            echo "❌ GOOGLE_SERVICE_INFO_PLIST environment variable not set!"
+            exit 1
+          fi
+
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files $(xcodebuild -showBuildSettings | grep PRODUCT_BUNDLE_IDENTIFIER | awk '{print $3}') \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
+
+      - name: Get Flutter packages
+        script: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios && pod install
+
+      - name: Build iOS IPA
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - flutter_drive.log
+
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
+        submit_to_app_store: false
