@@ -134,9 +134,10 @@ android {
         release {
             signingConfig signingConfigs.release
             // R8 obfuscation enabled for security
-            // Memory optimized for Codemagic mac_pro_m2 (32GB RAM)
+            // Resource shrinking DISABLED to reduce memory usage on CI
+            // Code obfuscation still active for security
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             // Use proguard-android.txt instead of proguard-android-optimize.txt to reduce memory
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
