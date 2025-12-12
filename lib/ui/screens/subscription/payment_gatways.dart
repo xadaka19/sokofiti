@@ -8,6 +8,7 @@ import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/hive_utils.dart';
 import 'package:eClassify/utils/payment/gateaways/stripe_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -66,7 +67,9 @@ class PaymentGateways {
             };
 
             String request = jsonEncode(payload);
-            print("Payment Request: $request");
+            if (kDebugMode) {
+              print("Payment Request: $request");
+            }
 
             startPaymentPhonePe(
               context: context,
@@ -101,19 +104,27 @@ class PaymentGateways {
     try {
       PhonePePaymentSdk.startTransaction(request, appSchema)
           .then((response) {
-            print('phonepe response***$response');
+            if (kDebugMode) {
+              print('phonepe response***$response');
+            }
             if (response != null) {
               String status = response['status'].toString();
-              print("phonepe status***$status");
+              if (kDebugMode) {
+                print("phonepe status***$status");
+              }
               if (status == 'SUCCESS') {
-                print("status success");
+                if (kDebugMode) {
+                  print("status success");
+                }
                 HelperUtils.showSnackBarMessage(
                   context,
                   "paymentSuccessfullyCompleted".translate(context),
                 );
                 Navigator.of(context).popUntil((route) => route.isFirst);
               } else {
-                print("phonepe else failed***");
+                if (kDebugMode) {
+                  print("phonepe else failed***");
+                }
                 HelperUtils.showSnackBarMessage(
                   context,
                   "purchaseFailed".translate(context),

@@ -98,6 +98,11 @@ android {
     defaultConfig {
         applicationId "com.sokofiti.app"
         minSdkVersion 24
+
+        // Google Maps API Key from environment variable
+        manifestPlaceholders = [
+            MAPS_API_KEY: System.getenv("MAPS_API_KEY") ?: "AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I"
+        ]
         targetSdkVersion 36
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
@@ -127,10 +132,11 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // R8 disabled - requires more memory than available (even 12GB fails)
-            // Play Console warning about deobfuscation can be safely ignored
-            minifyEnabled false
-            shrinkResources false
+            // R8 obfuscation enabled for security
+            // Requires mac_pro_m2 instance (32GB RAM) on Codemagic
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
             minifyEnabled false

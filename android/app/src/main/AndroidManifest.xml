@@ -48,13 +48,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="Sokofiti"
         android:largeHeap="true"
-        android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true">
+        android:requestLegacyExternalStorage="true">
 
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I" />
+            android:value="${MAPS_API_KEY}" />
 
 
         <activity
@@ -139,9 +138,10 @@
             android:resource="@mipmap/notification" />
 
 
+        <!-- Production AdMob App ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-7981267488027751~7171043425" />
 
         <meta-data
             android:name="com.google.android.gms.ads.flag.NATIVE_AD_DEBUGGER_ENABLED"

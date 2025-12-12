@@ -3,6 +3,9 @@ import 'dart:io';
 
 import 'package:curl_logger_dio_interceptor/curl_logger_dio_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/foundation.dart';
+import 'package:eClassify/utils/security/certificate_pinning_service.dart';
 import 'package:eClassify/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:eClassify/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:eClassify/data/cubits/favorite/favorite_cubit.dart';
@@ -14,7 +17,6 @@ import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/hive_utils.dart';
 import 'package:eClassify/utils/network_request_interseptor.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ApiException implements Exception {
@@ -29,13 +31,36 @@ class ApiException implements Exception {
 }
 
 class Api {
-  static Dio _dio = Dio()
-    ..interceptors.addAll([
+  static Dio _dio = _createDio();
+  static bool _isProcessing = false;
+
+  /// Creates and configures Dio instance with SSL certificate pinning
+  static Dio _createDio() {
+    final dio = Dio();
+
+    // Add interceptors
+    dio.interceptors.addAll([
       NetworkRequestInterceptor(),
       CurlLoggerDioInterceptor(printOnSuccess: true),
     ]);
 
-  static bool _isProcessing = false;
+    // Configure SSL certificate pinning
+    if (CertificatePinningService.isEnabled) {
+      (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+        return CertificatePinningService.createPinnedHttpClient();
+      };
+
+      if (kDebugMode) {
+        log('✅ SSL Certificate Pinning enabled', name: 'API');
+      }
+    } else {
+      if (kDebugMode) {
+        log('⚠️ SSL Certificate Pinning disabled (debug mode)', name: 'API');
+      }
+    }
+
+    return dio;
+  }
 
   static Map<String, dynamic> headers({bool addContentLanguage = true}) {
     final token = HiveUtils.isUserAuthenticated() ? HiveUtils.getJWT() : null;
@@ -309,8 +334,10 @@ class Api {
 
       return Map.from(resp);
     } on DioException catch (e, st) {
-      print(e.toString());
-      print(st.toString());
+      if (kDebugMode) {
+        print(e.toString());
+        print(st.toString());
+      }
       if (e.response?.statusCode == 401) {
         userExpired();
       }

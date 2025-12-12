@@ -53,8 +53,9 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
+	<!-- Production AdMob App ID for iOS -->
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-7981267488027751~7171043425</string>
 	<key>GIDClientID</key>
 	<string>6343732161-2d2p8ap7p3t8telagot152vrnotuptav.apps.googleusercontent.com</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -114,12 +115,5 @@
     <array>
         <string>INSendMessageIntent</string>
     </array>
-    <key>NSAppTransportSecurity</key>
-    	<dict>
-    		<key>NSAllowsArbitraryLoads</key>
-    		<true/>
-    		<key>NSAllowsArbitraryLoadsInWebContent</key>
-    		<true/>
-    	</dict>
 </dict>
 </plist>

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:eClassify/app/routes.dart';
 import 'package:eClassify/data/cubits/chat/delete_message_cubit.dart';
 import 'package:eClassify/data/cubits/chat/get_seller_chat_users_cubit.dart';
@@ -74,7 +75,9 @@ class LocalAwesomeNotification {
     required bool isLocked,
   }) async {
     try {
-      print('${notificationData.data}');
+      if (kDebugMode) {
+        print('${notificationData.data}');
+      }
       bool isChat =
           notificationData.data["type"] == Constant.notificationTypeChat;
       bool hasImage =
@@ -243,7 +246,9 @@ class NotificationController {
     ReceivedAction receivedAction,
   ) async {
     Map<String, String?>? payload = receivedAction.payload;
-    print(payload);
+    if (kDebugMode) {
+      print(payload);
+    }
     if (payload?['type'] == Constant.notificationTypeChat) {
       var username = payload?['user_name'];
       var itemImage = payload?['item_image'];

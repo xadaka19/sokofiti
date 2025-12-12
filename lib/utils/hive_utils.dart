@@ -19,8 +19,8 @@ class HiveUtils {
   /// Get JWT token (uses cached value for synchronous access)
   /// For initial load, use getJWTAsync() instead
   static String getJWT() {
-    // Return cached JWT if available, otherwise try Hive for backwards compatibility
-    return _cachedJWT ?? Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.jwtToken) ?? '';
+    // Return cached JWT (loaded from secure storage on app start)
+    return _cachedJWT ?? '';
   }
 
   /// Async method to get JWT from secure storage
@@ -106,14 +106,12 @@ class HiveUtils {
   }
 
   /// Set JWT token securely
-  /// Stores in both secure storage (primary) and Hive (for backwards compatibility)
+  /// Stores ONLY in secure storage (encrypted) for maximum security
   static Future<void> setJWT(String token) async {
     // Store in secure storage (encrypted)
     await SecureStorageService.setJWT(token);
-    // Update cache
+    // Update cache for synchronous access
     _cachedJWT = token;
-    // Also store in Hive for backwards compatibility (will be removed in future)
-    await Hive.box(HiveKeys.userDetailsBox).put(HiveKeys.jwtToken, token);
   }
 
   static UserModel getUserDetails() {

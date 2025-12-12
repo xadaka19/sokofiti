@@ -1,10 +1,17 @@
 # Flutter ProGuard Rules for Sokofiti App
+# Updated: December 12, 2024 - Security hardening
 
 # Keep Flutter classes
+-keep class io.flutter.app.** { *; }
 -keep class io.flutter.plugin.** { *; }
 -keep class io.flutter.util.** { *; }
 -keep class io.flutter.view.** { *; }
 -keep class io.flutter.plugins.** { *; }
+-keep class io.flutter.embedding.** { *; }
+
+# Preserve line numbers for crash reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
 # Keep Firebase classes
 -keep class com.google.firebase.** { *; }

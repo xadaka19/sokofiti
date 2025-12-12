@@ -74,6 +74,16 @@ workflows:
           # Kill any stale Gradle daemons to free memory
           ./gradlew --stop || true
 
+      - name: Export Google Maps API Key
+        script: |
+          # Export MAPS_API_KEY for Gradle to use
+          if [ -n "$MAPS_API_KEY" ]; then
+            echo "✅ MAPS_API_KEY is set"
+            export MAPS_API_KEY="$MAPS_API_KEY"
+          else
+            echo "⚠️ MAPS_API_KEY not set, using fallback from build.gradle"
+          fi
+
       - name: Build Android App Bundle
         script: |
           # Final verification before build

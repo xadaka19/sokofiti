@@ -55,14 +55,18 @@ Future<void> initApp() async {
     // Initialize secure storage for sensitive data
     await SecureStorageService.init();
 
+    // Migrate JWT from Hive to SecureStorage (one-time migration)
+    await _migrateJWTToSecureStorage();
+
     // Load JWT from secure storage into cache
     await HiveUtils.getJWTAsync();
 
     // Check device security (root/jailbreak detection)
     final isCompromised = await DeviceSecurityService.isDeviceCompromised();
     if (isCompromised && kReleaseMode) {
-      debugPrint('WARNING: Device appears to be rooted/jailbroken');
-      // You can choose to block the app here or show a warning
+      // Block app execution on compromised devices in production
+      debugPrint('❌ SECURITY: Device is rooted/jailbroken - blocking app');
+      return runApp(const _CompromisedDeviceScreen());
     }
 
     // Configure system UI and launch app
@@ -119,10 +123,155 @@ Future<void> _initializeHive() async {
   }
 }
 
+/// Migrates JWT token from Hive to SecureStorage (one-time migration)
+Future<void> _migrateJWTToSecureStorage() async {
+  try {
+    // Check if JWT exists in Hive
+    final hiveJWT = Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.jwtToken);
+
+    if (hiveJWT != null && hiveJWT.toString().isNotEmpty) {
+      // Check if already migrated to SecureStorage
+      final secureJWT = await SecureStorageService.getJWT();
+
+      if (secureJWT == null || secureJWT.isEmpty) {
+        // Migrate from Hive to SecureStorage
+        await SecureStorageService.setJWT(hiveJWT.toString());
+        if (kDebugMode) {
+          debugPrint('✅ JWT migrated from Hive to SecureStorage');
+        }
+      }
+
+      // Remove JWT from Hive for security
+      await Hive.box(HiveKeys.userDetailsBox).delete(HiveKeys.jwtToken);
+      if (kDebugMode) {
+        debugPrint('✅ JWT removed from Hive');
+      }
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('⚠️ JWT migration error: $e');
+    }
+  }
+}
+
 /// Configures system UI and launches the app
 Future<void> _configureSystemUI() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
+}
+
+/// Screen shown when device is compromised (rooted/jailbroken)
+class _CompromisedDeviceScreen extends StatelessWidget {
+  const _CompromisedDeviceScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Security icon
+                Icon(
+                  Icons.security,
+                  size: 100,
+                  color: Colors.red.shade700,
+                ),
+                const SizedBox(height: 32),
+
+                // Title
+                Text(
+                  'Security Alert',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red.shade700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+
+                // Message
+                Text(
+                  'This app cannot run on rooted or jailbroken devices for security reasons.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade800,
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+
+                // Explanation
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Why is this happening?',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade900,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Rooted or jailbroken devices have compromised security that could expose your personal data and payment information to malicious apps.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade700,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
+
+                // Exit button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Exit the app
+                      SystemNavigator.pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text(
+                      'Exit App',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
