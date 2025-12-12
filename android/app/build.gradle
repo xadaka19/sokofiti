@@ -101,7 +101,8 @@ android {
 
         // Google Maps API Key from environment variable
         manifestPlaceholders = [
-            MAPS_API_KEY: System.getenv("MAPS_API_KEY") ?: "AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I"
+            MAPS_API_KEY: System.getenv("MAPS_API_KEY") ?: "AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I",
+            applicationName: "android.app.Application"
         ]
         targetSdkVersion 36
         multiDexEnabled true
