@@ -87,9 +87,10 @@
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
 
-# Optimize (reduced passes to save memory on CI)
--optimizationpasses 2
+# Optimize (minimal passes to save memory on CI)
+-optimizationpasses 1
 -dontusemixedcaseclassnames
+-dontpreverify
 
 # Remove logging in release builds
 -assumenosideeffects class android.util.Log {
