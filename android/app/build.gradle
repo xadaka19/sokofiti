@@ -133,7 +133,7 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // Full R8 optimization enabled on Mac mini M4
+            // Full R8 optimization enabled on Linux x2 (32GB RAM)
             // R8 full mode + resource shrinking for maximum optimization
             // Code obfuscation active for security
             minifyEnabled true
