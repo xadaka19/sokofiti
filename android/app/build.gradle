@@ -133,12 +133,12 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            // R8 obfuscation enabled for security
-            // Resource shrinking DISABLED to reduce memory usage on CI
-            // Code obfuscation still active for security
+            // Full R8 optimization enabled on Mac mini M4
+            // R8 full mode + resource shrinking for maximum optimization
+            // Code obfuscation active for security
             minifyEnabled true
-            shrinkResources false
-            // Use proguard-android.txt instead of proguard-android-optimize.txt to reduce memory
+            shrinkResources true
+            // Use proguard-android.txt for balanced optimization
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
