@@ -13,10 +13,10 @@ workflows:
       # Required variables: GOOGLE_SERVICES_JSON, CM_KEYSTORE, CM_KEYSTORE_PASSWORD,
       # CM_KEY_PASSWORD, CM_KEY_ALIAS, GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
       vars:
-        # Increase Java heap for R8/L8 which requires more memory (24GB of 32GB available)
-        JAVA_TOOL_OPTIONS: "-Xmx24g"
+        # Increase Java heap for R8/L8 (12GB conservative to avoid OOM)
+        JAVA_TOOL_OPTIONS: "-Xmx12g -Xms4g"
         # Gradle-specific JVM args (overrides gradle.properties on CI)
-        GRADLE_OPTS: "-Xmx24g -Dorg.gradle.jvmargs=-Xmx24g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false"
+        GRADLE_OPTS: "-Xmx12g -Xms4g -Dorg.gradle.jvmargs=-Xmx12g -Dorg.gradle.parallel=false -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dkotlin.compiler.execution.strategy=in-process"
 
     scripts:
       - name: Set up local.properties
@@ -70,9 +70,20 @@ workflows:
 
       - name: Clean Gradle cache and free memory
         script: |
-          cd android && ./gradlew clean --no-daemon
-          # Kill any stale Gradle daemons to free memory
-          ./gradlew --stop || true
+          # Kill any stale Gradle daemons first
+          cd android && ./gradlew --stop || true
+
+          # Clean build artifacts
+          ./gradlew clean --no-daemon
+
+          # Clear Gradle cache to free memory
+          rm -rf ~/.gradle/caches/build-cache-* || true
+
+          # Force garbage collection
+          jps | grep -i gradle | awk '{print $1}' | xargs kill -9 2>/dev/null || true
+
+          echo "🔹 Memory status after cleanup:"
+          vm_stat | grep "Pages free" || free -h || true
 
       - name: Export Google Maps API Key
         script: |
@@ -92,6 +103,10 @@ workflows:
 
           echo "🔹 Verifying keystore file exists:"
           ls -la "$CM_BUILD_DIR/android/app/release-keystore.jks"
+
+          # Check available memory before build
+          echo "🔹 Available memory:"
+          vm_stat | grep "Pages free" || free -h || true
 
           # Build only AAB for Play Store
           flutter build appbundle --release \

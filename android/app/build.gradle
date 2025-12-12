@@ -137,7 +137,14 @@ android {
             // Requires mac_pro_m2 instance (32GB RAM) on Codemagic
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // Use proguard-android.txt instead of proguard-android-optimize.txt to reduce memory
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            // R8 memory optimization flags
+            android.r8 {
+                // Reduce memory usage by limiting parallel processing
+                maxWorkers = 2
+            }
         }
         debug {
             minifyEnabled false
