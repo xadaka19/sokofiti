@@ -17,6 +17,7 @@ import 'package:eClassify/utils/login/lib/login_status.dart';
 import 'package:eClassify/utils/login/lib/payloads.dart';
 import 'package:eClassify/utils/ui_utils.dart';
 import 'package:eClassify/utils/widgets.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sms_autofill/sms_autofill.dart';
@@ -103,9 +104,13 @@ class MobileSignUpScreenState extends State<MobileSignUpScreen> {
     try {
       signature = await SmsAutoFill().getAppSignature;
       await SmsAutoFill().listenForCode();
-      print("App Signature: $signature"); // For debugging
+      if (kDebugMode) {
+        print("App Signature: $signature");
+      }
     } catch (e) {
-      print("Error getting signature: $e");
+      if (kDebugMode) {
+        print("Error getting signature: $e");
+      }
     }
   }
 

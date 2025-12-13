@@ -100,8 +100,12 @@ android {
         minSdkVersion 24
 
         // Google Maps API Key from environment variable
+        def mapsApiKey = System.getenv("MAPS_API_KEY")
+        if (mapsApiKey == null || mapsApiKey.isEmpty()) {
+            throw new RuntimeException("MAPS_API_KEY environment variable is not set. Please set it before building.")
+        }
         manifestPlaceholders = [
-            MAPS_API_KEY: System.getenv("MAPS_API_KEY") ?: "AIzaSyAqK2VYsRaBG4tgrz5rW2QIArC8JLzit1I",
+            MAPS_API_KEY: mapsApiKey,
             applicationName: "android.app.Application"
         ]
         targetSdkVersion 36

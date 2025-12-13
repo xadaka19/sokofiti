@@ -39,10 +39,12 @@ class Api {
     final dio = Dio();
 
     // Add interceptors
-    dio.interceptors.addAll([
-      NetworkRequestInterceptor(),
-      CurlLoggerDioInterceptor(printOnSuccess: true),
-    ]);
+    dio.interceptors.add(NetworkRequestInterceptor());
+
+    // Only add curl logger in debug mode
+    if (kDebugMode) {
+      dio.interceptors.add(CurlLoggerDioInterceptor(printOnSuccess: true));
+    }
 
     // Configure SSL certificate pinning
     if (CertificatePinningService.isEnabled) {

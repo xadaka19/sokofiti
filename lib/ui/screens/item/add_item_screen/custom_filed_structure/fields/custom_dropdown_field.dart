@@ -6,6 +6,7 @@ import 'package:eClassify/utils/app_icon.dart';
 import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -132,7 +133,9 @@ class CustomFieldDropdown extends CustomField {
                       onChanged: (value) {
                         if (value == null) return;
                         selected = value;
-                        print(selected);
+                        if (kDebugMode) {
+                          print('Dropdown selected: $selected');
+                        }
                         update(() {});
                         AbstractField.fieldsData.addAll({
                           parameters['id'].toString(): [selected],

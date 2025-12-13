@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:eClassify/utils/constant.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class AdHelper {
@@ -48,8 +49,11 @@ class AdHelper {
       return;
     }
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+      onAdShowedFullScreenContent: (InterstitialAd ad) {
+        if (kDebugMode) {
+          print('ad onAdShowedFullScreenContent.');
+        }
+      },
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
         ad.dispose();
         loadInterstitialAd();

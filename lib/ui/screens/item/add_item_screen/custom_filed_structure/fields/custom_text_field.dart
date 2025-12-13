@@ -5,6 +5,7 @@ import 'package:eClassify/ui/theme/theme.dart';
 import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomFieldText extends CustomField {
@@ -14,7 +15,9 @@ class CustomFieldText extends CustomField {
 
   @override
   void init() {
-    print('Parameters: ${parameters.toString()}');
+    if (kDebugMode) {
+      print('Custom text field parameters: ${parameters.toString()}');
+    }
 
     // Restore value per language from AbstractField.fieldsData
     String compositeKey = '${parameters['id']}';

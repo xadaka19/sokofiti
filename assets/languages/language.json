@@ -445,7 +445,7 @@
   "fieldMustNotBeEmpty": "Field must not be empty",
   "textMustBe": "Text must be",
   "characterLong": "character long",
-  "passwordWarning": "Password must be 6 character long",
+  "passwordWarning": "Password must be at least 8 characters long",
   "fieldSameWarning": "Both fields must be match",
   "plzValidUrlLbl": "Please enter valid URL",
   "blockLbl": "Block",

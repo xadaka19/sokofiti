@@ -22,6 +22,7 @@ import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/hive_utils.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -253,7 +254,9 @@ class MainActivityState extends State<MainActivity> {
   }
 
   void onItemTapped(int index) {
-    print(index);
+    if (kDebugMode) {
+      print("Tab index: $index");
+    }
     _bottomNavigationController.changeIndex(index);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:eClassify/utils/login/lib/login_status.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import 'package:eClassify/utils/login/lib/login_system.dart';
@@ -56,6 +57,8 @@ class AppleLogin extends LoginSystem {
 
   @override
   void onEvent(MLoginState state) {
-    print("Login state is $state");
+    if (kDebugMode) {
+      print("Apple login state: $state");
+    }
   }
 }

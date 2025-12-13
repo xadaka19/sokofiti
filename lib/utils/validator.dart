@@ -113,7 +113,7 @@ class Validator {
   }) {
     if (password!.isEmpty) {
       return "fieldMustNotBeEmpty".translate(context);
-    } else if (password.length < 6) {
+    } else if (password.length < 8) {
       return "passwordWarning".translate(context);
     }
     if (secondFieldValue != null) {

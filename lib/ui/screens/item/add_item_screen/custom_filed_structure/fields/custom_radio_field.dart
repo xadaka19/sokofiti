@@ -6,6 +6,7 @@ import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/ui_utils.dart';
 import 'package:eClassify/utils/validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomRadioField extends CustomField {
@@ -125,7 +126,9 @@ class CustomRadioField extends CustomField {
                             ],
                           });
 
-                          print('${selectedOption?.value}');
+                          if (kDebugMode) {
+                            print('Radio selected: ${selectedOption?.value}');
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(

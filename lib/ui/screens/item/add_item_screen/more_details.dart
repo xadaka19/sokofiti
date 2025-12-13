@@ -16,6 +16,7 @@ import 'package:eClassify/utils/cloud_state/cloud_state.dart';
 import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -347,18 +348,18 @@ class _AddMoreDetailsScreenState extends CloudState<AddMoreDetailsScreen>
                   itemDetailsScreenData['custom_field_translations'] = json
                       .encode(customFieldTranslations);
 
-                  print(itemDetailsScreenData['custom_field_translations']);
-                  print(
-                    itemDetailsScreenData['custom_field_translations']
-                        .runtimeType,
-                  );
+                  if (kDebugMode) {
+                    print('Custom field translations: ${itemDetailsScreenData['custom_field_translations']}');
+                    print('Type: ${itemDetailsScreenData['custom_field_translations'].runtimeType}');
+                  }
 
                   itemDetailsScreenData.addAll(AbstractField.files);
 
-                  // Debug prints to verify file inclusion
-                  print("Files being sent: ");
-                  AbstractField.files.forEach((k, v) => print("  $k: $v"));
-                  print("Payload: $itemDetailsScreenData");
+                  if (kDebugMode) {
+                    print("Files being sent: ");
+                    AbstractField.files.forEach((k, v) => print("  $k: $v"));
+                    print("Payload keys: ${itemDetailsScreenData.keys.toList()}");
+                  }
 
                   addCloudData("with_more_details", itemDetailsScreenData);
                   screenStack++;

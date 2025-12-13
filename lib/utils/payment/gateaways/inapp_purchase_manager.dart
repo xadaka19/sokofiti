@@ -8,6 +8,7 @@ import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/helper_utils.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -69,7 +70,9 @@ class InAppPurchaseManager {
           await Future.delayed(Duration(seconds: 1));
           await _inAppPurchase.completePurchase(_purchaseDetails);
         } catch (e) {
-          print('Error completing purchase: $e');
+          if (kDebugMode) {
+            print('Error completing purchase: $e');
+          }
           // Handle the error appropriately
         }
       }
@@ -94,7 +97,9 @@ class InAppPurchaseManager {
               await Future.delayed(Duration(seconds: 1));
               await _inAppPurchase.completePurchase(inAppPurchaseEvent);
             } catch (e) {
-              print('Error completing purchase: $e');
+              if (kDebugMode) {
+                print('Error completing purchase: $e');
+              }
               // Handle the error appropriately
             }
           }
@@ -125,7 +130,9 @@ class InAppPurchaseManager {
       },
       onError: (error) {
 
-        print('Purchase stream error: $error');
+        if (kDebugMode) {
+          print('Purchase stream error: $error');
+        }
       },
     );
   }

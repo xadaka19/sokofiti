@@ -68,7 +68,9 @@ class PaymentGateways {
 
             String request = jsonEncode(payload);
             if (kDebugMode) {
-              print("Payment Request: $request");
+              if (kDebugMode) {
+                print("Payment Request: $request");
+              }
             }
 
             startPaymentPhonePe(

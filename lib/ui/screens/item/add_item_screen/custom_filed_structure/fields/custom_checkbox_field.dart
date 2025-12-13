@@ -6,6 +6,7 @@ import 'package:eClassify/utils/custom_text.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:eClassify/utils/ui_utils.dart';
 import 'package:eClassify/utils/validator.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CustomCheckboxField extends CustomField {
@@ -126,7 +127,9 @@ class CustomCheckboxField extends CustomField {
                                 .toList(),
                           });
 
-                          print(selectedOptions);
+                          if (kDebugMode) {
+                            print('Checkbox selected: $selectedOptions');
+                          }
                           update(() {});
                           state.didChange(selectedOptions.toList());
                         },

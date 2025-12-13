@@ -39,11 +39,15 @@ class _AdBannerWidgetState extends State<AdBannerWidget> {
       listener: BannerAdListener(
         onAdLoaded: (ad) {
           // Called when an ad is successfully received.
-          print("Admob was loaded.");
+          if (kDebugMode) {
+            print("Admob was loaded.");
+          }
         },
         onAdFailedToLoad: (ad, err) {
           // Called when an ad request failed.
-          print("Admob failed to load with error: $err");
+          if (kDebugMode) {
+            print("Admob failed to load with error: $err");
+          }
           ad.dispose();
         },
       ),

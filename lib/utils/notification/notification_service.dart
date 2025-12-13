@@ -22,6 +22,7 @@ import 'package:eClassify/utils/hive_utils.dart';
 import 'package:eClassify/utils/notification/awsome_notification.dart';
 import 'package:eClassify/utils/notification/chat_message_handler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -90,8 +91,10 @@ class NotificationService {
       var itemOfferPrice = message?.data['item_offer_amount'];
       var userType = message?.data['user_type'];
 
-      log('$message');
-      log('$currentlyChatingWith $currentlyChatItemId');
+      if (kDebugMode) {
+        log('Chat notification received: ${message?.data['user_name']}', name: 'NotificationService');
+        log('Currently chatting with: $currentlyChatingWith, Item: $currentlyChatItemId', name: 'NotificationService');
+      }
 
       if (senderId == currentlyChatingWith && itemId == currentlyChatItemId) {
         ChatMessageModal chatMessageModel = ChatMessageModal(
@@ -411,10 +414,14 @@ class NotificationService {
         }
       } else if (message.data['type'] ==
           Constant.notificationTypeVerificationStatus) {
-        print('Verification Status');
+        if (kDebugMode) {
+          log('Verification Status notification received', name: 'NotificationService');
+        }
         MainActivity.globalKey.currentState?.onItemTapped(3);
       } else {
-        print('${message.data['type']}');
+        if (kDebugMode) {
+          log('Notification type: ${message.data['type']}', name: 'NotificationService');
+        }
         Future.delayed(Duration.zero, () {
           HelperUtils.goToNextPage(
             Routes.notificationPage,

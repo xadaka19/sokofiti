@@ -23,6 +23,7 @@ import 'package:eClassify/utils/hive_utils.dart';
 import 'package:eClassify/utils/image_picker.dart';
 import 'package:eClassify/utils/slug_formatter.dart';
 import 'package:eClassify/utils/ui_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,7 +115,9 @@ class _AddItemDetailsState extends CloudState<AddItemDetails>
       );
 
       // Store translations for later population when languages are available
-      print("item?.translations***${item?.translations}");
+      if (kDebugMode) {
+        print("item?.translations***${item?.translations}");
+      }
       if (item?.translations != null) {
         // Store the translations data to populate later
         addCloudData("item_translations", item!.translations);
@@ -400,7 +403,9 @@ class _AddItemDetailsState extends CloudState<AddItemDetails>
                         }
                       }
 
-                      print("translations***$translations");
+                      if (kDebugMode) {
+                        print("translations***$translations");
+                      }
 
                       if (_pickTitleImage.pickedFile == null &&
                           titleImageURL == "") {

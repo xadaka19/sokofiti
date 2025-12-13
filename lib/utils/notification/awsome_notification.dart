@@ -1,6 +1,7 @@
 // ignore_for_file: file_names
 
 import 'dart:async';
+import 'dart:developer' as dev;
 import 'dart:io';
 import 'dart:math';
 
@@ -76,7 +77,7 @@ class LocalAwesomeNotification {
   }) async {
     try {
       if (kDebugMode) {
-        print('${notificationData.data}');
+        dev.log('Creating notification: ${notificationData.data['type']}', name: 'AwesomeNotification');
       }
       bool isChat =
           notificationData.data["type"] == Constant.notificationTypeChat;
@@ -247,7 +248,7 @@ class NotificationController {
   ) async {
     Map<String, String?>? payload = receivedAction.payload;
     if (kDebugMode) {
-      print(payload);
+      dev.log('Notification action received: ${payload?['type']}', name: 'AwesomeNotification');
     }
     if (payload?['type'] == Constant.notificationTypeChat) {
       var username = payload?['user_name'];

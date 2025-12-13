@@ -13,6 +13,7 @@ import 'package:eClassify/utils/login/lib/login_system.dart';
 import 'package:eClassify/utils/login/lib/payloads.dart';
 import 'package:eClassify/utils/login/phone_login/phone_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Enum representing different authentication types
@@ -104,10 +105,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         await _handleStandardAuthentication();
       }
     } on FirebaseAuthException catch (e) {
-      print("firebase error***${e.code.toString()}***${e.message.toString()}");
+      if (kDebugMode) {
+        print("firebase error***${e.code.toString()}***${e.message.toString()}");
+      }
       _handleFirebaseAuthError(e);
     } catch (e, stack) {
-      print("error auth***${e.toString()}");
+      if (kDebugMode) {
+        print("error auth***${e.toString()}");
+      }
       _handleGeneralError(e, stack);
     }
   }
@@ -175,8 +180,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   /// Handles general errors
   void _handleGeneralError(dynamic e, StackTrace stack) {
-    print(e.toString());
-    print('$stack');
+    if (kDebugMode) {
+      print(e.toString());
+      print('$stack');
+    }
     emit(AuthenticationFail(e.toString()));
   }
 
