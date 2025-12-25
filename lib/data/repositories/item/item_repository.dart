@@ -314,7 +314,6 @@ class ItemRepository {
     };
 
     if (filter != null) {
-      parameters.remove(Api.area);
       if (filter.customFields != null) {
         parameters.addAll(filter.customFields!);
       }

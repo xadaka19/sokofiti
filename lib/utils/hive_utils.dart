@@ -181,6 +181,14 @@ class HiveUtils {
     });
   }
 
+  /// Saves the user's preferred location to persistent storage.
+  ///
+  /// This represents the location the user has explicitly chosen (either by manual selection
+  /// or by tapping "Use My Location"). This location persists across app sessions and should
+  /// NOT be automatically updated by GPS unless the user explicitly requests it.
+  ///
+  /// Use [LeafLocationCubit.setLocation()] to update this value, which will also update
+  /// the app's current location state.
   static void setLocationV2({required LeafLocation location}) {
     final effectiveLocation = Constant.isDemoModeOn
         ? Constant.defaultLocation
@@ -201,6 +209,10 @@ class HiveUtils {
     });
   }
 
+  /// Retrieves the user's saved preferred location from persistent storage.
+  ///
+  /// This is the location the user has explicitly chosen and should remain stable
+  /// unless the user manually changes it. Returns null if no location has been set.
   static LeafLocation? getLocationV2() {
     final json =
         (Hive.box(HiveKeys.userDetailsBox).get(HiveKeys.locationKey) as Map?)

@@ -131,8 +131,12 @@ class LocationMapController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Gets the current GPS location and updates the map.
+  /// This does NOT save to Hive - it only updates the map temporarily.
+  /// The location will be saved when the user confirms/posts the ad.
   Future<void> getLocation(BuildContext context) async {
-    final location = await _locationUtility.getLocation(context);
+    // Don't save to Hive here - just get the GPS location for the map
+    final location = await _locationUtility.getLocation(context, saveToHive: false);
     if (location == null) return;
     _location = location;
     _radius = _location.radius != null && _location.radius != 0

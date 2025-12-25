@@ -44,7 +44,11 @@ final class LocationUtility {
     return permission;
   }
 
-  Future<LeafLocation?> getLocation(BuildContext context) async {
+  /// Gets the current GPS location and returns it WITHOUT saving to Hive.
+  /// This should only be called when user explicitly requests their current location.
+  ///
+  /// To save the location, call LeafLocationCubit.setLocation() with the result.
+  Future<LeafLocation?> getLocation(BuildContext context, {bool saveToHive = false}) async {
     final permission = await _getLocationPermission();
     final permissionGiven =
         permission == LocationPermission.always ||
@@ -52,7 +56,7 @@ final class LocationUtility {
     final locationServiceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (permissionGiven && locationServiceEnabled) {
-      await _getLiveLocation();
+      await _getLiveLocation(saveToHive: saveToHive);
       return location;
     } else {
       _handlePermissionDenied(
@@ -64,7 +68,11 @@ final class LocationUtility {
     return null;
   }
 
-  Future<void> _getLiveLocation() async {
+  /// Fetches the current GPS location.
+  ///
+  /// [saveToHive] - If true, saves the location to Hive. Default is false.
+  /// This prevents automatic overwriting of user's manually selected location.
+  Future<void> _getLiveLocation({bool saveToHive = false}) async {
     // First, try to get last known position for immediate feedback
     // This provides a faster initial experience while we fetch the current position
     Position? lastKnownPosition;
@@ -117,6 +125,13 @@ final class LocationUtility {
           longitude: position.longitude,
         );
       }
+    }
+
+    // Only save to Hive if explicitly requested (when user taps "Use My Location")
+    // This prevents automatic overwriting of user's manually selected location
+    if (saveToHive && location != null) {
+      HiveUtils.setLocationV2(location: location!);
+      log('GPS location saved to Hive', name: '_getLiveLocation');
     }
   }
 

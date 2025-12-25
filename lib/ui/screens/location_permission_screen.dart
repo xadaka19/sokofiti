@@ -93,8 +93,10 @@ class LocationPermissionScreenState extends State<LocationPermissionScreen> {
                       onPressed: () async {
                         try {
                           LoadingWidgets.showLoader(context);
+                          // User explicitly requested their current location, so save it
                           final location = await LocationUtility().getLocation(
                             context,
+                            saveToHive: true,
                           );
                           if (location != null) {
                             context.read<LeafLocationCubit>().setLocation(
