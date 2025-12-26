@@ -2778,14 +2778,19 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             setIconButtons(
               assetName: AppIcons.message,
               onTap: () {
-                HelperUtils.launchPathURL(
-                  isTelephone: false,
-                  isSMS: true,
-                  isMail: false,
-                  value: formatPhoneNumber(
-                    model.contact ?? model.user!.mobile!,
-                    Constant.defaultCountryCode,
-                  ),
+                UiUtils.checkUser(
+                  onNotGuest: () {
+                    HelperUtils.launchPathURL(
+                      isTelephone: false,
+                      isSMS: true,
+                      isMail: false,
+                      value: formatPhoneNumber(
+                        model.contact ?? model.user!.mobile!,
+                        Constant.defaultCountryCode,
+                      ),
+                      context: context,
+                    );
+                  },
                   context: context,
                 );
               },
@@ -2797,14 +2802,19 @@ class AdDetailsScreenState extends CloudState<AdDetailsScreen> {
             setIconButtons(
               assetName: AppIcons.call,
               onTap: () {
-                HelperUtils.launchPathURL(
-                  isTelephone: true,
-                  isSMS: false,
-                  isMail: false,
-                  value: formatPhoneNumber(
-                    model.user!.mobile!,
-                    Constant.defaultCountryCode,
-                  ),
+                UiUtils.checkUser(
+                  onNotGuest: () {
+                    HelperUtils.launchPathURL(
+                      isTelephone: true,
+                      isSMS: false,
+                      isMail: false,
+                      value: formatPhoneNumber(
+                        model.user!.mobile!,
+                        Constant.defaultCountryCode,
+                      ),
+                      context: context,
+                    );
+                  },
                   context: context,
                 );
               },

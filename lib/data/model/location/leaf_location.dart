@@ -110,7 +110,12 @@ class LeafLocation {
 
   bool get isEmpty => primaryText == null || primaryText!.isEmpty;
 
-  bool get isValid => _locationParts.length >= 3;
+  /// Validates if the location has sufficient detail for posting ads.
+  ///
+  /// Requires at least 2 location parts (City + Country minimum).
+  /// This ensures ads are associated with at least a city-level location
+  /// while being more permissive than requiring Area + City + State + Country.
+  bool get isValid => _locationParts.length >= 2;
 
   bool get hasCoordinates => latitude != null && longitude != null;
 

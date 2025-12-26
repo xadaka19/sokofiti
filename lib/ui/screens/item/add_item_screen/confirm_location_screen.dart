@@ -4,10 +4,12 @@ import 'dart:io';
 
 import 'package:eClassify/app/routes.dart';
 import 'package:eClassify/data/cubits/item/manage_item_cubit.dart';
+import 'package:eClassify/data/cubits/location/location_search_cubit.dart';
 import 'package:eClassify/data/model/item/item_model.dart';
 import 'package:eClassify/data/model/localized_string.dart';
 import 'package:eClassify/data/model/location/leaf_location.dart';
 import 'package:eClassify/data/cubits/item/my_items_refresh_cubit.dart';
+import 'package:eClassify/ui/screens/location/widgets/place_api_search_bar.dart';
 import 'package:eClassify/ui/screens/widgets/location_map/location_map_controller.dart';
 import 'package:eClassify/ui/screens/widgets/location_map/location_map_widget.dart';
 import 'package:eClassify/ui/theme/theme.dart';
@@ -62,6 +64,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
   LeafLocation _location = LeafLocation();
 
   late final LocationMapController _controller;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -96,12 +99,21 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
 
     _controller.addListener(() {
       _location = _controller.data.location;
+
+      // Update search bar text when location changes
+      if (_controller.isReady) {
+        final location = _controller.data.location;
+        _searchController.text = location.isEmpty
+            ? ''
+            : location.localizedPath;
+      }
     });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -114,18 +126,31 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
           return;
         });
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: UiUtils.buildAppBar(
-          context,
-          onBackPress: () {
-            Future.delayed(Duration(milliseconds: 500), () {
-              Navigator.pop(context);
-            });
-          },
-          showBackButton: true,
-          title: "confirmLocation".translate(context),
-        ),
+      child: BlocProvider(
+        create: (context) => LocationSearchCubit(),
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: UiUtils.buildAppBar(
+            context,
+            onBackPress: () {
+              Future.delayed(Duration(milliseconds: 500), () {
+                Navigator.pop(context);
+              });
+            },
+            showBackButton: true,
+            title: "confirmLocation".translate(context),
+            bottomHeight: 65,
+            bottom: [
+              PlaceApiSearchBar(
+                enabled: true,
+                controller: _searchController,
+                onLocationSelected: (location) {
+                  _searchController.text = location.localizedPath;
+                  _controller.updateLocation(location);
+                },
+              ),
+            ],
+          ),
         bottomNavigationBar: ListenableBuilder(
           listenable: _controller,
           builder: (context, child) {
@@ -222,6 +247,7 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
           },
         ),
         body: bodyData(),
+        ),
       ),
     );
   }
@@ -282,41 +308,41 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
                           ],
                         ),
                       ),
-                      if (Constant.mapProvider == 'free_api')
-                        FilledButton(
-                          onPressed: () async {
-                            final location =
-                                await Navigator.of(context).pushNamed(
-                                      Routes.locationScreen,
-                                      arguments: {
-                                        'requires_exact_location': true,
-                                      },
-                                    )
-                                    as LeafLocation?;
-                            if (location == null) return;
-                            _controller.updateLocation(location);
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: context.color.territoryColor
-                                .withValues(alpha: .1),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            minimumSize: Size(70, 20),
-                            fixedSize: Size(70, 25),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
-                            ),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
+                      // Allow all users to change location via search, regardless of map provider
+                      FilledButton(
+                        onPressed: () async {
+                          final location =
+                              await Navigator.of(context).pushNamed(
+                                    Routes.locationScreen,
+                                    arguments: {
+                                      'requires_exact_location': true,
+                                    },
+                                  )
+                                  as LeafLocation?;
+                          if (location == null) return;
+                          _controller.updateLocation(location);
+                        },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: context.color.territoryColor
+                              .withValues(alpha: .1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
                           ),
-                          child: CustomText(
-                            'change'.translate(context),
-                            color: context.color.territoryColor,
-                            fontSize: context.font.small,
+                          minimumSize: Size(70, 20),
+                          fixedSize: Size(70, 25),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
                           ),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
                         ),
+                        child: CustomText(
+                          'change'.translate(context),
+                          color: context.color.territoryColor,
+                          fontSize: context.font.small,
+                        ),
+                      ),
                     ],
                   ),
                 ),
