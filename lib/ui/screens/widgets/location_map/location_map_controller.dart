@@ -81,6 +81,9 @@ class LocationMapController extends ChangeNotifier {
       // Use injected location provider instead of direct HiveUtils access
       final location = _locationProvider();
 
+      // Use saved location if available, otherwise use default
+      // The default location (Nairobi) is just a fallback to show the map
+      // Users can change it via search or GPS
       if (location == null || !location.hasCoordinates) {
         _location = Constant.defaultLocation;
       } else {

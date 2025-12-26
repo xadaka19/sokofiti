@@ -44,8 +44,11 @@ class ConfirmLocationScreen extends StatefulWidget {
 
     return MaterialPageRoute(
       builder: (context) {
-        return BlocProvider(
-          create: (context) => ManageItemCubit(),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (context) => ManageItemCubit()),
+            BlocProvider(create: (context) => LocationSearchCubit()),
+          ],
           child: ConfirmLocationScreen(
             isEdit: arguments?['isEdit'] ?? false,
             mainImage: arguments?['mainImage'],
@@ -126,31 +129,29 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
           return;
         });
       },
-      child: BlocProvider(
-        create: (context) => LocationSearchCubit(),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: UiUtils.buildAppBar(
-            context,
-            onBackPress: () {
-              Future.delayed(Duration(milliseconds: 500), () {
-                Navigator.pop(context);
-              });
-            },
-            showBackButton: true,
-            title: "confirmLocation".translate(context),
-            bottomHeight: 65,
-            bottom: [
-              PlaceApiSearchBar(
-                enabled: true,
-                controller: _searchController,
-                onLocationSelected: (location) {
-                  _searchController.text = location.localizedPath;
-                  _controller.updateLocation(location);
-                },
-              ),
-            ],
-          ),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: UiUtils.buildAppBar(
+          context,
+          onBackPress: () {
+            Future.delayed(Duration(milliseconds: 500), () {
+              Navigator.pop(context);
+            });
+          },
+          showBackButton: true,
+          title: "confirmLocation".translate(context),
+          bottomHeight: 65,
+          bottom: [
+            PlaceApiSearchBar(
+              enabled: true,
+              controller: _searchController,
+              onLocationSelected: (location) {
+                _searchController.text = location.localizedPath;
+                _controller.updateLocation(location);
+              },
+            ),
+          ],
+        ),
         bottomNavigationBar: ListenableBuilder(
           listenable: _controller,
           builder: (context, child) {
@@ -247,7 +248,6 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
           },
         ),
         body: bodyData(),
-        ),
       ),
     );
   }
