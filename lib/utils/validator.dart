@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:eClassify/utils/extensions/extensions.dart';
 import 'package:flutter/material.dart';
@@ -55,8 +57,11 @@ class Validator {
     required String value,
     required BuildContext context,
   }) {
+    log('🔍 Validating Safaricom number: $value', name: 'SafaricomValidator');
+
     // Remove all spaces, dashes, and parentheses
     String cleanNumber = value.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    log('  Cleaned number: $cleanNumber', name: 'SafaricomValidator');
 
     // Safaricom prefixes (without country code)
     // 07XX series: 0700-0709, 0710-0719, 0720-0729, 0740-0749, 0757-0759, 0768-0769, 0790-0799
@@ -73,12 +78,15 @@ class Validator {
     // Check if number starts with country code (+254 or 254)
     if (cleanNumber.startsWith('+254')) {
       cleanNumber = '0' + cleanNumber.substring(4);
+      log('  Converted from +254 to: $cleanNumber', name: 'SafaricomValidator');
     } else if (cleanNumber.startsWith('254')) {
       cleanNumber = '0' + cleanNumber.substring(3);
+      log('  Converted from 254 to: $cleanNumber', name: 'SafaricomValidator');
     }
 
     // Check if number is 10 digits starting with 0
     if (!RegExp(r'^0\d{9}$').hasMatch(cleanNumber)) {
+      log('  ❌ FAILED: Not 10 digits starting with 0', name: 'SafaricomValidator');
       return "Please enter a valid 10-digit Safaricom number";
     }
 
@@ -86,9 +94,11 @@ class Validator {
     bool isValidSafaricom = safaricomPrefixes.any((prefix) => cleanNumber.startsWith(prefix));
 
     if (!isValidSafaricom) {
+      log('  ❌ FAILED: Not a Safaricom prefix (${cleanNumber.substring(0, 4)})', name: 'SafaricomValidator');
       return "Only Safaricom numbers are allowed (07XX)";
     }
 
+    log('  ✅ VALID Safaricom number!', name: 'SafaricomValidator');
     return null;
   }
 

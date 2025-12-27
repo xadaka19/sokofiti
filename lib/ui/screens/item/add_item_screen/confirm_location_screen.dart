@@ -103,14 +103,6 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
     _controller.addListener(() {
       setState(() {
         _location = _controller.data.location;
-        log('Location updated: ${_location.localizedPath}', name: 'ConfirmLocationScreen');
-        log('  - isValid: ${_location.isValid}', name: 'ConfirmLocationScreen');
-        log('  - hasCoordinates: ${_location.hasCoordinates}', name: 'ConfirmLocationScreen');
-        log('  - city: ${_location.city?.canonical}', name: 'ConfirmLocationScreen');
-        log('  - country: ${_location.country?.canonical}', name: 'ConfirmLocationScreen');
-        log('  - primaryText: ${_location.primaryText}', name: 'ConfirmLocationScreen');
-        log('  - secondaryText: ${_location.secondaryText}', name: 'ConfirmLocationScreen');
-        log('  - radius: ${_location.radius}', name: 'ConfirmLocationScreen');
       });
 
       // Update search bar text when location changes
@@ -198,13 +190,6 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
                     right: 18,
                   ),
                   onTapDisabledButton: () {
-                    log('Post Now button tapped but disabled!', name: 'ConfirmLocationScreen');
-                    log('  - _location.isValid: ${_location.isValid}', name: 'ConfirmLocationScreen');
-                    log('  - _location.localizedPath: ${_location.localizedPath}', name: 'ConfirmLocationScreen');
-                    log('  - _location.city: ${_location.city?.canonical}', name: 'ConfirmLocationScreen');
-                    log('  - _location.country: ${_location.country?.canonical}', name: 'ConfirmLocationScreen');
-                    log('  - _location.primaryText: ${_location.primaryText}', name: 'ConfirmLocationScreen');
-                    log('  - _location.secondaryText: ${_location.secondaryText}', name: 'ConfirmLocationScreen');
                     HelperUtils.showSnackBarMessage(
                       context,
                       'Invalid Location',
@@ -368,13 +353,6 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
                                   )
                                   as LeafLocation?;
                           if (location == null) return;
-                          log('Location returned from LocationScreen: ${location.localizedPath}', name: 'ConfirmLocationScreen');
-                          log('  - isValid: ${location.isValid}', name: 'ConfirmLocationScreen');
-                          log('  - city: ${location.city?.canonical}', name: 'ConfirmLocationScreen');
-                          log('  - country: ${location.country?.canonical}', name: 'ConfirmLocationScreen');
-                          log('  - primaryText: ${location.primaryText}', name: 'ConfirmLocationScreen');
-                          log('  - secondaryText: ${location.secondaryText}', name: 'ConfirmLocationScreen');
-                          log('  - radius: ${location.radius}', name: 'ConfirmLocationScreen');
                           _controller.updateLocation(location);
                         },
                         style: FilledButton.styleFrom(
