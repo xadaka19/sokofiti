@@ -184,9 +184,20 @@ class LocationMapController extends ChangeNotifier {
   /// This does NOT save to Hive - it only updates the map temporarily.
   /// The location will be saved when the user confirms/posts the ad.
   Future<void> getLocation(BuildContext context) async {
+    log('📍 GPS: Fetching location...', name: 'LocationMapController');
     // Don't save to Hive here - just get the GPS location for the map
     final location = await _locationUtility.getLocation(context, saveToHive: false);
-    if (location == null) return;
+    if (location == null) {
+      log('❌ GPS: Location is null', name: 'LocationMapController');
+      return;
+    }
+    log('✅ GPS: Location fetched successfully', name: 'LocationMapController');
+    log('  - hasArea: ${location.hasArea}', name: 'LocationMapController');
+    log('  - hasCity: ${location.hasCity}', name: 'LocationMapController');
+    log('  - hasState: ${location.hasState}', name: 'LocationMapController');
+    log('  - hasCountry: ${location.hasCountry}', name: 'LocationMapController');
+    log('  - isValid: ${location.isValid}', name: 'LocationMapController');
+
     _location = location;
     _radius = _location.radius != null && _location.radius != 0
         ? _location.radius!
@@ -204,6 +215,17 @@ class LocationMapController extends ChangeNotifier {
 
   void updateLocation(LeafLocation location) {
     if (_location == location) return;
+    log('📍 updateLocation called', name: 'LocationMapController');
+    log('  - placeId: ${location.placeId}', name: 'LocationMapController');
+    log('  - primaryText: ${location.primaryText}', name: 'LocationMapController');
+    log('  - secondaryText: ${location.secondaryText}', name: 'LocationMapController');
+    log('  - hasArea: ${location.hasArea}', name: 'LocationMapController');
+    log('  - hasCity: ${location.hasCity}', name: 'LocationMapController');
+    log('  - hasState: ${location.hasState}', name: 'LocationMapController');
+    log('  - hasCountry: ${location.hasCountry}', name: 'LocationMapController');
+    log('  - hasCoordinates: ${location.hasCoordinates}', name: 'LocationMapController');
+    log('  - isValid: ${location.isValid}', name: 'LocationMapController');
+
     _location = location;
     if (_location.latitude != null && _location.longitude != null) {
       isReady = true;

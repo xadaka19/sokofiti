@@ -130,10 +130,19 @@ class _PlaceApiSearchBarState extends State<PlaceApiSearchBar>
                   return LocationItem(
                     title: location.primaryText!,
                     subtitle: location.secondaryText,
-                    onTap: () {
+                    onTap: () async {
                       context.read<LocationSearchCubit>().clearSearch();
                       _focusNode.unfocus();
-                      widget.onLocationSelected(location);
+
+                      // Fetch full location details from placeId before passing to callback
+                      if (location.placeId != null) {
+                        await context.read<LocationSearchCubit>().selectLocation(
+                          placeId: location.placeId!,
+                        );
+                      } else {
+                        // Fallback: if no placeId, use the location as-is
+                        widget.onLocationSelected(location);
+                      }
                     },
                     showTrailingIcon: false,
                   );
@@ -161,6 +170,9 @@ class _PlaceApiSearchBarState extends State<PlaceApiSearchBar>
           if (_overlayPortalController.isShowing) {
             _overlayPortalController.hide();
           }
+        } else if (state is LocationSearchSelected) {
+          // When full location details are fetched, pass to callback
+          widget.onLocationSelected(state.location);
         } else {
           if (!_overlayPortalController.isShowing) {
             _overlayPortalController.show();
