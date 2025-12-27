@@ -37,19 +37,58 @@ class Validator {
     required BuildContext context,
     required bool isRequired,
   }) {
-    final pattern = RegExp(r"^[0-9]{6,15}$");
-
     // If the field is required and the value is empty
     if (isRequired && (value ??= "").trim().isEmpty) {
       return "pleaseEnterValidPhoneNumber".translate(context);
     }
 
-    // If the value is not empty, check the pattern
-    if (value!.isNotEmpty && !pattern.hasMatch(value)) {
-      return "pleaseEnterValidPhoneNumber".translate(context);
+    // If value is empty and not required, return null
+    if (value!.trim().isEmpty) {
+      return null;
     }
 
-    // No issues, return null
+    // Validate Safaricom number
+    return validateSafaricomNumber(value: value, context: context);
+  }
+
+  static String? validateSafaricomNumber({
+    required String value,
+    required BuildContext context,
+  }) {
+    // Remove all spaces, dashes, and parentheses
+    String cleanNumber = value.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+
+    // Safaricom prefixes (without country code)
+    // 07XX series: 0700-0709, 0710-0719, 0720-0729, 0740-0749, 0757-0759, 0768-0769, 0790-0799
+    final safaricomPrefixes = [
+      '0700', '0701', '0702', '0703', '0704', '0705', '0706', '0707', '0708', '0709',
+      '0710', '0711', '0712', '0713', '0714', '0715', '0716', '0717', '0718', '0719',
+      '0720', '0721', '0722', '0723', '0724', '0725', '0726', '0727', '0728', '0729',
+      '0740', '0741', '0742', '0743', '0744', '0745', '0746', '0747', '0748', '0749',
+      '0757', '0758', '0759',
+      '0768', '0769',
+      '0790', '0791', '0792', '0793', '0794', '0795', '0796', '0797', '0798', '0799',
+    ];
+
+    // Check if number starts with country code (+254 or 254)
+    if (cleanNumber.startsWith('+254')) {
+      cleanNumber = '0' + cleanNumber.substring(4);
+    } else if (cleanNumber.startsWith('254')) {
+      cleanNumber = '0' + cleanNumber.substring(3);
+    }
+
+    // Check if number is 10 digits starting with 0
+    if (!RegExp(r'^0\d{9}$').hasMatch(cleanNumber)) {
+      return "Please enter a valid 10-digit Safaricom number";
+    }
+
+    // Check if number starts with a valid Safaricom prefix
+    bool isValidSafaricom = safaricomPrefixes.any((prefix) => cleanNumber.startsWith(prefix));
+
+    if (!isValidSafaricom) {
+      return "Only Safaricom numbers are allowed (07XX)";
+    }
+
     return null;
   }
 
