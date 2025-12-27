@@ -102,6 +102,7 @@ class FetchSystemSettingsCubit extends Cubit<FetchSystemSettingsState> {
       SystemSetting.otpServiceProvider,
     );
     Constant.mapProvider = _getSetting(settings, SystemSetting.mapProvider);
+    log('🗺️ Map Provider set to: "${Constant.mapProvider}"', name: 'FetchSystemSettings');
     Constant.currencySymbol = _getSetting(
       settings,
       SystemSetting.currencySymbol,

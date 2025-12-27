@@ -81,17 +81,33 @@ class LocationMapController extends ChangeNotifier {
       // Use injected location provider instead of direct HiveUtils access
       final location = _locationProvider();
 
-      // Use saved location if available, otherwise use default
-      // The default location (Nairobi) is just a fallback to show the map
-      // Users can change it via search or GPS
-      if (location == null || !location.hasCoordinates) {
-        _location = Constant.defaultLocation;
-      } else {
+      // If user has a saved location preference, use it
+      if (location != null && location.hasCoordinates) {
         _location = location;
+        _radius = _location.radius ?? Constant.minRadius;
+        isReady = true;
+        _updatePosition(LatLng(_location.latitude!, _location.longitude!));
+      } else {
+        // New user with no saved location:
+        // Try to auto-fetch GPS location silently (no permission dialogs)
+        // If GPS permission is granted, use it. Otherwise, leave location empty.
+        final gpsLocation = await _locationUtility.getLocationSilently();
+
+        if (gpsLocation != null && gpsLocation.hasCoordinates) {
+          // GPS permission granted - use GPS location
+          _location = gpsLocation;
+          _radius = _location.radius ?? Constant.minRadius;
+          isReady = true;
+          _updatePosition(LatLng(_location.latitude!, _location.longitude!));
+        } else {
+          // GPS permission not granted - leave location empty
+          // User must set location manually via search or GPS button
+          _location = LeafLocation();
+          _radius = Constant.minRadius;
+          isReady = false; // Map won't show until user sets location
+          notifyListeners();
+        }
       }
-      _radius = _location.radius ?? Constant.minRadius;
-      isReady = true;
-      _updatePosition(LatLng(_location.latitude!, _location.longitude!));
     }
   }
 
@@ -145,6 +161,7 @@ class LocationMapController extends ChangeNotifier {
     _radius = _location.radius != null && _location.radius != 0
         ? _location.radius!
         : _radius;
+    isReady = true;
     _updatePosition(LatLng(_location.latitude!, _location.longitude!));
   }
 
@@ -159,6 +176,7 @@ class LocationMapController extends ChangeNotifier {
     if (_location == location) return;
     _location = location;
     if (_location.latitude != null && _location.longitude != null) {
+      isReady = true;
       _updatePosition(LatLng(_location.latitude!, _location.longitude!));
     }
     notifyListeners();

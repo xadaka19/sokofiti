@@ -259,12 +259,43 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: LocationMapWidget(
-                controller: _controller,
-                showCircleArea: false,
+            if (_controller.isReady)
+              Expanded(
+                child: LocationMapWidget(
+                  controller: _controller,
+                  showCircleArea: false,
+                ),
+              )
+            else
+              Expanded(
+                child: Container(
+                  color: context.color.secondaryColor,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      spacing: 16,
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 80,
+                          color: context.color.territoryColor.withValues(alpha: 0.3),
+                        ),
+                        CustomText(
+                          'No Location Set',
+                          fontSize: context.font.larger,
+                          fontWeight: FontWeight.w600,
+                          color: context.color.textColorDark,
+                        ),
+                        CustomText(
+                          'Please set your location to continue',
+                          fontSize: context.font.normal,
+                          color: context.color.textLightColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
             if (_controller.isReady)
               ColoredBox(
                 color: context.color.backgroundColor,
@@ -348,7 +379,84 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
                 ),
               )
             else
-              shimmerEffect(),
+              // Show prompt to set location when no location is available
+              ColoredBox(
+                color: context.color.backgroundColor,
+                child: Padding(
+                  padding: Constant.appContentPadding.copyWith(
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  child: Column(
+                    spacing: 12,
+                    children: [
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppIcons.location,
+                            height: 20,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                              context.color.territoryColor,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: CustomText(
+                              'Please set your location to continue',
+                              color: context.color.textColorDark,
+                              fontSize: context.font.normal,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 12,
+                        children: [
+                          Expanded(
+                            child: UiUtils.buildButton(
+                              context,
+                              onPressed: () async {
+                                final location =
+                                    await Navigator.of(context).pushNamed(
+                                          Routes.locationScreen,
+                                          arguments: {
+                                            'requires_exact_location': true,
+                                          },
+                                        )
+                                        as LeafLocation?;
+                                if (location == null) return;
+                                _controller.updateLocation(location);
+                              },
+                              height: 40,
+                              fontSize: context.font.normal,
+                              radius: 8,
+                              buttonTitle: 'Search Location',
+                              buttonColor: context.color.territoryColor,
+                            ),
+                          ),
+                          Expanded(
+                            child: UiUtils.buildButton(
+                              context,
+                              onPressed: () async {
+                                await _controller.getLocation(context);
+                              },
+                              height: 40,
+                              fontSize: context.font.normal,
+                              radius: 8,
+                              buttonTitle: 'Use GPS',
+                              buttonColor: context.color.secondaryColor,
+                              textColor: context.color.territoryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         );
       },

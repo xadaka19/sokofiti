@@ -80,6 +80,7 @@ class LocationRepository {
   /// [search] is the query string entered by the user.
   Future<List<LeafLocation>> searchLocation({required String search}) async {
     final usePaidApi = Constant.mapProvider != 'free_api';
+    log('🔍 searchLocation - mapProvider: "${Constant.mapProvider}", usePaidApi: $usePaidApi', name: 'LocationRepository');
     try {
       final response = await Api.get(
         url: Api.getLocationApi,
@@ -91,6 +92,7 @@ class LocationRepository {
         },
         addContentLanguage: !usePaidApi,
       );
+      log('🔍 searchLocation - Response received: ${response.toString().substring(0, 100)}...', name: 'LocationRepository');
 
       if (usePaidApi) {
         // final data = await rootBundle.loadString('assets/search_data.json');

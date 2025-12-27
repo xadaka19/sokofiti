@@ -44,6 +44,28 @@ final class LocationUtility {
     return permission;
   }
 
+  /// Silently checks if GPS permission is granted and fetches location WITHOUT showing dialogs.
+  /// Returns null if permission is not granted or GPS is unavailable.
+  /// This is used for auto-fetching GPS location for new users without annoying popups.
+  Future<LeafLocation?> getLocationSilently({bool saveToHive = false}) async {
+    try {
+      // Check permission without requesting it
+      final permission = await Geolocator.checkPermission();
+      final permissionGiven =
+          permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse;
+      final locationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+
+      if (permissionGiven && locationServiceEnabled) {
+        await _getLiveLocation(saveToHive: saveToHive);
+        return location;
+      }
+    } catch (e) {
+      log('Failed to get location silently: $e', name: 'getLocationSilently');
+    }
+    return null;
+  }
+
   /// Gets the current GPS location and returns it WITHOUT saving to Hive.
   /// This should only be called when user explicitly requests their current location.
   ///
