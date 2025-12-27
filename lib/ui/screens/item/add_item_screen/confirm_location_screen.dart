@@ -101,7 +101,9 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
     }
 
     _controller.addListener(() {
-      _location = _controller.data.location;
+      setState(() {
+        _location = _controller.data.location;
+      });
 
       // Update search bar text when location changes
       if (_controller.isReady) {
