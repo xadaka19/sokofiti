@@ -74,6 +74,8 @@ class LeafLocation {
     LocalizedString? city,
     LocalizedString? state,
     LocalizedString? country,
+    String? primaryText,
+    String? secondaryText,
   }) {
     return LeafLocation(
       area: area ?? this.area,
@@ -84,6 +86,8 @@ class LeafLocation {
       longitude: longitude,
       placeId: placeId,
       radius: radius ?? this.radius ?? Constant.minRadius,
+      primaryText: primaryText ?? this.primaryText,
+      secondaryText: secondaryText ?? this.secondaryText,
     );
   }
 

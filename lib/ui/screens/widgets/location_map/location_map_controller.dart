@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:eClassify/data/model/location/leaf_location.dart';
+import 'package:eClassify/data/repositories/location/location_repository.dart';
 import 'package:eClassify/ui/theme/theme.dart';
 import 'package:eClassify/utils/constant.dart';
 import 'package:eClassify/utils/hive_utils.dart';
@@ -81,12 +82,41 @@ class LocationMapController extends ChangeNotifier {
       // Use injected location provider instead of direct HiveUtils access
       final location = _locationProvider();
 
-      // If user has a saved location preference, use it
+      // If user has a saved location preference with coordinates, use it
       if (location != null && location.hasCoordinates) {
         _location = location;
         _radius = _location.radius ?? Constant.minRadius;
         isReady = true;
         _updatePosition(LatLng(_location.latitude!, _location.longitude!));
+      } else if (location != null && !location.isEmpty && location.placeId != null) {
+        // User has saved location from Places API but without coordinates
+        // Fetch coordinates from placeId
+        try {
+          final locationWithCoords = await LocationRepository().getLocationFromPlaceId(
+            placeId: location.placeId!,
+          );
+          _location = locationWithCoords;
+          _radius = _location.radius ?? Constant.minRadius;
+          isReady = true;
+          _updatePosition(LatLng(_location.latitude!, _location.longitude!));
+          // Update saved location with coordinates
+          HiveUtils.setLocationV2(location: _location);
+        } catch (e) {
+          log('Failed to fetch coordinates from placeId: $e', name: 'LocationMapController');
+          // Fallback: try GPS or force manual selection
+          final gpsLocation = await _locationUtility.getLocationSilently();
+          if (gpsLocation != null && gpsLocation.hasCoordinates) {
+            _location = gpsLocation;
+            _radius = _location.radius ?? Constant.minRadius;
+            isReady = true;
+            _updatePosition(LatLng(_location.latitude!, _location.longitude!));
+          } else {
+            _location = LeafLocation();
+            _radius = Constant.minRadius;
+            isReady = false;
+            notifyListeners();
+          }
+        }
       } else {
         // New user with no saved location:
         // Try to auto-fetch GPS location silently (no permission dialogs)
