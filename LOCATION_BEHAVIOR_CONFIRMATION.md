@@ -48,7 +48,7 @@ The saved location (`HiveUtils.getLocationV2()`) comes from:
 
 1. **User selected location via "Nearby Listings" widget** (home screen location icon)
 2. **User selected location via search bar** in any location picker
-3. **User tapped GPS button** and confirmed the location
+3. **User tapped GPS button** and confirmed the location 
 4. **User manually dragged the map** and confirmed
 
 **Key Point:** The location is ONLY saved when the user **explicitly chooses it**, not automatically.

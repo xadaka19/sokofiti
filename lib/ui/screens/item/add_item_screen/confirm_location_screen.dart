@@ -101,9 +101,12 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
     }
 
     _controller.addListener(() {
+      log('🔔 ConfirmLocationScreen: Controller listener fired', name: 'ConfirmLocationScreen');
+      log('  - isValid: ${_controller.data.location.isValid}', name: 'ConfirmLocationScreen');
       setState(() {
         _location = _controller.data.location;
       });
+      log('  - _location updated, isValid: ${_location.isValid}', name: 'ConfirmLocationScreen');
 
       // Update search bar text when location changes
       if (_controller.isReady) {
@@ -148,6 +151,12 @@ class _ConfirmLocationScreenState extends CloudState<ConfirmLocationScreen> {
               enabled: true,
               controller: _searchController,
               onLocationSelected: (location) {
+                log('🎯 ConfirmLocationScreen: onLocationSelected called', name: 'ConfirmLocationScreen');
+                log('  - hasArea: ${location.hasArea}', name: 'ConfirmLocationScreen');
+                log('  - hasCity: ${location.hasCity}', name: 'ConfirmLocationScreen');
+                log('  - hasState: ${location.hasState}', name: 'ConfirmLocationScreen');
+                log('  - hasCountry: ${location.hasCountry}', name: 'ConfirmLocationScreen');
+                log('  - isValid: ${location.isValid}', name: 'ConfirmLocationScreen');
                 _searchController.text = location.localizedPath;
                 _controller.updateLocation(location);
               },

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:eClassify/data/cubits/location/location_search_cubit.dart';
 import 'package:eClassify/data/model/location/leaf_location.dart';
 import 'package:eClassify/ui/screens/location/widgets/debounce_search_mixin.dart';
@@ -172,6 +174,12 @@ class _PlaceApiSearchBarState extends State<PlaceApiSearchBar>
           }
         } else if (state is LocationSearchSelected) {
           // When full location details are fetched, pass to callback
+          log('🎯 PlaceApiSearchBar: Passing full location to callback', name: 'PlaceApiSearchBar');
+          log('  - hasArea: ${state.location.hasArea}', name: 'PlaceApiSearchBar');
+          log('  - hasCity: ${state.location.hasCity}', name: 'PlaceApiSearchBar');
+          log('  - hasState: ${state.location.hasState}', name: 'PlaceApiSearchBar');
+          log('  - hasCountry: ${state.location.hasCountry}', name: 'PlaceApiSearchBar');
+          log('  - isValid: ${state.location.isValid}', name: 'PlaceApiSearchBar');
           widget.onLocationSelected(state.location);
         } else {
           if (!_overlayPortalController.isShowing) {
