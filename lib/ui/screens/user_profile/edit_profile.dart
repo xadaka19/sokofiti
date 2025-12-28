@@ -243,7 +243,7 @@ class UserProfileScreenState extends State<UserProfileScreen> {
           onChange: (value) {
             setState(() {});
           },
-          isMobileRequired: false,
+          isMobileRequired: true, // ✅ Changed to true - Safaricom number required
           fixedPrefix: GestureDetector(
             onTap: () {
               if (HiveUtils.getUserDetails().type !=

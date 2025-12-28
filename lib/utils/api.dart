@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:eClassify/utils/security/certificate_pinning_service.dart';
+import 'package:eClassify/utils/security/rate_limiter_service.dart';
 import 'package:eClassify/data/cubits/chat/blocked_users_list_cubit.dart';
 import 'package:eClassify/data/cubits/chat/get_buyer_chat_users_cubit.dart';
 import 'package:eClassify/data/cubits/favorite/favorite_cubit.dart';
@@ -33,6 +34,7 @@ class ApiException implements Exception {
 class Api {
   static Dio _dio = _createDio();
   static bool _isProcessing = false;
+  static final RateLimiterService _rateLimiter = RateLimiterService();
 
   /// Creates and configures Dio instance with SSL certificate pinning
   static Dio _createDio() {
@@ -286,6 +288,13 @@ class Api {
     Options? options,
     bool? useBaseUrl,
   }) async {
+    // Check rate limit
+    if (!_rateLimiter.isRequestAllowed(url)) {
+      throw ApiException(
+        "Too many requests. Please wait a moment and try again.",
+      );
+    }
+
     try {
       late FormData formData;
 
@@ -402,6 +411,13 @@ class Api {
     Map<String, dynamic>? queryParameters,
     bool? useBaseUrl,
   }) async {
+    // Check rate limit
+    if (!_rateLimiter.isRequestAllowed(url)) {
+      throw ApiException(
+        "Too many requests. Please wait a moment and try again.",
+      );
+    }
+
     try {
       final response = await _dio.delete(
         ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url,
@@ -439,6 +455,13 @@ class Api {
     bool? useBaseUrl,
     bool addContentLanguage = true,
   }) async {
+    // Check rate limit
+    if (!_rateLimiter.isRequestAllowed(url)) {
+      throw ApiException(
+        "Too many requests. Please wait a moment and try again.",
+      );
+    }
+
     try {
       String mainurl = ((useBaseUrl ?? true) ? Constant.baseUrl : "") + url;
       final response = await _dio.get(

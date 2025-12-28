@@ -136,7 +136,7 @@ class AppSettings {
   static int payStackStatus = 1;
   static String paypalClientId = "";
   static String paypalServerKey = "";
-  static bool isSandBoxMode = true;
+  static bool isSandBoxMode = false; // ✅ PRODUCTION MODE - Sandbox disabled
   static String paypalCancelURL = "";
   static String paypalReturnURL = "";
   static String stripeCurrency = "";
