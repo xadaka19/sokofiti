@@ -58,6 +58,10 @@ class LocationSearchCubit extends Cubit<LocationSearchState> {
   Future<void> selectLocation({required String placeId}) async {
     try {
       log('🔍 Fetching full location details for placeId: $placeId', name: 'LocationSearchCubit');
+      if (isClosed) {
+        log('⚠️ Cubit already closed, aborting selectLocation', name: 'LocationSearchCubit');
+        return;
+      }
       emit(LocationSearchSelecting());
       final location = await LocationRepository().getLocationFromPlaceId(
         placeId: placeId,
@@ -68,6 +72,10 @@ class LocationSearchCubit extends Cubit<LocationSearchState> {
       log('  - hasState: ${location.hasState}', name: 'LocationSearchCubit');
       log('  - hasCountry: ${location.hasCountry}', name: 'LocationSearchCubit');
       log('  - isValid: ${location.isValid}', name: 'LocationSearchCubit');
+      if (isClosed) {
+        log('⚠️ Cubit closed during fetch, aborting emit', name: 'LocationSearchCubit');
+        return;
+      }
       emit(LocationSearchSelected(location: location));
     } on Exception catch (e, stack) {
       log('❌ Error fetching location: $e', name: 'selectLocation');

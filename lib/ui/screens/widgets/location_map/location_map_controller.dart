@@ -53,6 +53,7 @@ class LocationMapController extends ChangeNotifier {
   late Circle _circle;
   late CameraPosition _cameraPosition;
   double _radius = Constant.minRadius;
+  bool _isDisposed = false;
 
   double get radius => _radius;
 
@@ -174,19 +175,33 @@ class LocationMapController extends ChangeNotifier {
       strokeColor: territoryColor_,
     );
     _cameraPosition = CameraPosition(target: coordinates, zoom: _zoom);
-    if (isReady) {
-      _mapController?.animateCamera(CameraUpdate.newLatLng(coordinates));
+    if (isReady && !_isDisposed && _mapController != null) {
+      try {
+        _mapController!.animateCamera(CameraUpdate.newLatLng(coordinates));
+      } catch (e) {
+        log('⚠️ Map controller error (widget may be disposed): $e', name: 'LocationMapController');
+      }
     }
-    notifyListeners();
+    if (!_isDisposed) {
+      notifyListeners();
+    }
   }
 
   /// Gets the current GPS location and updates the map.
   /// This does NOT save to Hive - it only updates the map temporarily.
   /// The location will be saved when the user confirms/posts the ad.
   Future<void> getLocation(BuildContext context) async {
+    if (_isDisposed) {
+      log('⚠️ GPS: Controller already disposed, aborting', name: 'LocationMapController');
+      return;
+    }
     log('📍 GPS: Fetching location...', name: 'LocationMapController');
     // Don't save to Hive here - just get the GPS location for the map
     final location = await _locationUtility.getLocation(context, saveToHive: false);
+    if (_isDisposed) {
+      log('⚠️ GPS: Controller disposed during fetch, aborting', name: 'LocationMapController');
+      return;
+    }
     if (location == null) {
       log('❌ GPS: Location is null', name: 'LocationMapController');
       return;
@@ -207,13 +222,20 @@ class LocationMapController extends ChangeNotifier {
   }
 
   void updateRadius(double value) {
+    if (_isDisposed) return;
     if (value == _radius) return;
     _radius = value;
     _circle = _circle.copyWith(radiusParam: _radius * 1000);
-    notifyListeners();
+    if (!_isDisposed) {
+      notifyListeners();
+    }
   }
 
   void updateLocation(LeafLocation location) {
+    if (_isDisposed) {
+      log('⚠️ updateLocation: Controller already disposed, aborting', name: 'LocationMapController');
+      return;
+    }
     if (_location == location) return;
     log('📍 updateLocation called', name: 'LocationMapController');
     log('  - placeId: ${location.placeId}', name: 'LocationMapController');
@@ -231,6 +253,15 @@ class LocationMapController extends ChangeNotifier {
       isReady = true;
       _updatePosition(LatLng(_location.latitude!, _location.longitude!));
     }
-    notifyListeners();
+    if (!_isDisposed) {
+      notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _mapController?.dispose();
+    super.dispose();
   }
 }

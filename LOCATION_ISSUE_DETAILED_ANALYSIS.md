@@ -272,9 +272,61 @@ flutter run
 3. ✅ `lib/ui/screens/widgets/location_map/location_map_controller.dart`
    - Added debug logging in `updateLocation()`
    - Added debug logging in `getLocation()` (GPS)
+   - **Added `_isDisposed` flag to prevent using controller after disposal**
+   - **Added disposal checks in all async methods**
+   - **Added try-catch for map controller operations**
+   - **Added proper `dispose()` override**
 
 4. ✅ `lib/data/cubits/location/location_search_cubit.dart`
    - Added debug logging in `selectLocation()`
+   - **Added `isClosed` checks to prevent emitting states after disposal**
+
+---
+
+## 🐛 Additional Fixes Applied
+
+### **Fix 1: Prevent "Cannot emit new states after calling close" Error**
+
+**Problem:** When user navigates away from the screen while location is being fetched, the cubit tries to emit states after being closed.
+
+**Solution:** Added `isClosed` checks before emitting states in `LocationSearchCubit.selectLocation()`:
+```dart
+if (isClosed) {
+  log('⚠️ Cubit already closed, aborting selectLocation');
+  return;
+}
+emit(LocationSearchSelecting());
+// ... fetch location ...
+if (isClosed) {
+  log('⚠️ Cubit closed during fetch, aborting emit');
+  return;
+}
+emit(LocationSearchSelected(location: location));
+```
+
+### **Fix 2: Prevent "GoogleMapController was used after disposal" Error**
+
+**Problem:** When user navigates away from the screen while GPS is being fetched, the controller tries to use the map after disposal.
+
+**Solution:** Added `_isDisposed` flag and checks in all methods:
+```dart
+bool _isDisposed = false;
+
+void updateLocation(LeafLocation location) {
+  if (_isDisposed) return;
+  // ... update logic ...
+  if (!_isDisposed) {
+    notifyListeners();
+  }
+}
+
+@override
+void dispose() {
+  _isDisposed = true;
+  _mapController?.dispose();
+  super.dispose();
+}
+```
 
 ---
 
