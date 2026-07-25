@@ -14,11 +14,12 @@ import 'package:eClassify/data/cubits/location/leaf_location_cubit.dart';
 import 'package:eClassify/data/cubits/slider_cubit.dart';
 import 'package:eClassify/data/cubits/system/fetch_system_settings_cubit.dart';
 import 'package:eClassify/data/model/home/home_screen_section_model.dart';
+import 'package:eClassify/ui/screens/home/widgets/popular_category_widget.dart';
+import 'package:eClassify/data/cubits/home/popular_categories_cubit.dart';
 import 'package:eClassify/data/model/location/leaf_location.dart';
 import 'package:eClassify/data/model/system_settings_model.dart';
 import 'package:eClassify/ui/screens/ad_banner_screen.dart';
 import 'package:eClassify/ui/screens/home/slider_widget.dart';
-import 'package:eClassify/ui/screens/home/widgets/category_widget_home.dart';
 import 'package:eClassify/ui/screens/home/widgets/grid_list_adapter.dart';
 import 'package:eClassify/ui/screens/home/widgets/home_search.dart';
 import 'package:eClassify/ui/screens/home/widgets/home_sections_adapter.dart';
@@ -99,6 +100,7 @@ class HomeScreenState extends State<HomeScreen>
     final location = context.read<LeafLocationCubit>().state;
     context.read<SliderCubit>().fetchSlider(context);
     context.read<FetchCategoryCubit>().fetchCategories();
+    context.read<PopularCategoriesCubit>().fetchPopularCategories();
     context.read<FetchHomeScreenCubit>().fetch(location: location);
     context.read<FetchHomeAllItemsCubit>().fetch(location: location);
   }
@@ -182,7 +184,7 @@ class HomeScreenState extends State<HomeScreen>
       children: [
         const HomeSearchField(),
         const SliderWidget(),
-        const CategoryWidgetHome(),
+        const PopularCategoryWidget(),
         if (state.sections.isNotEmpty)
           ...List.generate(state.sections.length, (index) {
             HomeScreenSection section = state.sections[index];

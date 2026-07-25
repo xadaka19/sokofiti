@@ -27,6 +27,7 @@ import 'package:eClassify/data/cubits/fetch_notifications_cubit.dart';
 import 'package:eClassify/data/cubits/home/fetch_home_all_items_cubit.dart';
 import 'package:eClassify/data/cubits/home/fetch_home_screen_cubit.dart';
 import 'package:eClassify/data/cubits/home/fetch_section_items_cubit.dart';
+import 'package:eClassify/data/cubits/home/popular_categories_cubit.dart';
 import 'package:eClassify/data/cubits/item/change_my_items_status_cubit.dart';
 import 'package:eClassify/data/cubits/item/create_featured_ad_cubit.dart';
 import 'package:eClassify/data/cubits/item/delete_item_cubit.dart';
@@ -83,6 +84,7 @@ class RegisterCubits {
     BlocProvider(create: (context) => SliderCubit()),
     BlocProvider(create: (context) => CompanyCubit()),
     BlocProvider(create: (context) => FetchCategoryCubit()),
+    BlocProvider(create: (context) => PopularCategoriesCubit()),
     BlocProvider(create: (context) => SettingsPagesCubit()),
     BlocProvider(create: (context) => NotificationCubit()),
     BlocProvider(create: (context) => AppThemeCubit(), lazy: false),

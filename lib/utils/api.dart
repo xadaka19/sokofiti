@@ -84,6 +84,7 @@ class Api {
   static String userProfile = 'get-user-info';
   static String getSliderApi = "get-slider";
   static String getCategoriesApi = "get-categories";
+  static String getPopularCategoriesApi = "get-popular-categories";
   static String getItemApi = "get-item";
   static String getMyItemApi = "my-items";
   static String getNotificationListApi = "get-notification-list";
@@ -140,8 +141,9 @@ class Api {
   static String unBlockUserApi = "unblock-user";
   static String blockedUsersListApi = "blocked-users";
   static String getPaymentDetailsApi = "payment-transactions";
+  static String paymentReceiptApi = "get-payment-receipt";
 
-  static String userPurchasePackageApi = "user-purchase-package";
+  static String userPurchasePackageApi = "get-user-purchased-packages";
   static String deleteInquiryApi = "delete-inquiry";
   static String setItemEnquiryApi = "set-item_-inquiry";
   static String getItemApiEnquiry = "get-item-inquiry";

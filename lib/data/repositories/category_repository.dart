@@ -15,6 +15,7 @@ class CategoryRepository {
       if (categoryId != null) {
         parameters[Api.categoryId] = categoryId;
       }
+
       Map<String, dynamic> response =
           await Api.get(url: Api.getCategoriesApi, queryParameters: parameters);
 
@@ -23,9 +24,25 @@ class CategoryRepository {
           return CategoryModel.fromJson(e);
         },
       ).toList();
-      return DataOutput(
-          total: response['data']['total'] ?? 0, modelList: modelList);
 
+      return DataOutput(
+        total: response['data']['total'] ?? 0,
+        modelList: modelList,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<CategoryModel>> fetchPopularCategories() async {
+    try {
+      final Map<String, dynamic> response = await Api.get(
+        url: Api.getPopularCategoriesApi,
+      );
+
+      return (response['data'] as List)
+          .map((e) => CategoryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       rethrow;
     }
